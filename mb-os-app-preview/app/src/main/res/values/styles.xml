@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  全 App 统一的 Material 3 Expressive 样式套件（v4.2 重写，对齐 Google Play 商店风格）：
+  页面骨架 = MaterialToolbar + MaxWidthFrameLayout(≤840dp) + NestedScrollView + 卡片。
+
+  设计基线：
+  - 卡片：20dp 大圆角、colorSurface 纯色底、零 elevation、无描边；
+    分层靠「页面 ContainerLow / 卡片 Surface」tonal 色阶，不用阴影边框。
+  - 强调：主色容器卡（Mb.Page.Card.Accent）每页至多一张，用于唯一主 CTA。
+  - 按钮：全宽 52dp、行内 40dp、20dp 圆角、长文案两行不裁切。
+  - 徽标：全圆角 pill。
+
+  任何页面 / 对话框 / 悬浮窗都应复用这里的样式；程序化构建一律走 ui/M3Kit.kt，
+  两处语义一一对应，保证「XML 页面」与「代码页面 / 悬浮窗」视觉一致。
+-->
+<resources>
+
+    <!-- 页面内容卡：16dp 圆角、纯白底、零 elevation、1dp 极淡描边。
+         分层做法：页面 ContainerLow(#F7F2FA) / 卡片 Lowest(#FFFFFF) 靠色阶拉层次，
+         描边只做 hairline 收边（colorOutlineVariant #CAC4D0，M3 官方 outlined card 用色）——
+         不用 colorOutline，那是正文级灰，1dp 满铺会把整屏画成线框，视觉过重。 -->
+    <style name="Mb.Page.Card" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">?attr/colorSurfaceContainerLowest</item>
+        <item name="cardCornerRadius">@dimen/shape_card</item>
+        <item name="cardElevation">0dp</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">?attr/colorOutlineVariant</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/space_card</item>
+    </style>
+
+    <!-- 次级卡（tonal）：卡中分组 / 次要信息 -->
+    <style name="Mb.Page.Card.Tonal" parent="Mb.Page.Card">
+        <item name="cardBackgroundColor">?attr/colorSurfaceContainerLow</item>
+        <item name="cardCornerRadius">@dimen/shape_card</item>
+    </style>
+
+    <!-- 强调卡（主色容器底，用于引导页首卡等需要抓眼球的位置，每页至多一张） -->
+    <style name="Mb.Page.Card.Accent" parent="Mb.Page.Card">
+        <item name="cardBackgroundColor">?attr/colorPrimaryContainer</item>
+    </style>
+
+    <!-- 卡片内部纵向容器 -->
+    <style name="Mb.Page.CardBody" parent="">
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <!-- 分区标题（卡片外） -->
+    <style name="Mb.SectionHeader" parent="">
+        <item name="android:textAppearance">?attr/textAppearanceTitleMedium</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/space_section_top</item>
+        <item name="android:layout_marginBottom">8dp</item>
+    </style>
+
+    <!-- 卡片标题（默认占满卡片宽；显式声明优先） -->
+    <style name="Mb.CardTitle" parent="">
+        <item name="android:textAppearance">?attr/textAppearanceTitleSmall</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <!-- 卡片说明正文（默认占满卡片宽；显式声明优先） -->
+    <style name="Mb.CardDesc" parent="">
+        <item name="android:textAppearance">?attr/textAppearanceBodySmall</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:lineSpacingExtra">3dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <!-- 行内标签（左标签右值；默认包裹内容，避免误占满横行） -->
+    <style name="Mb.InfoLabel" parent="">
+        <item name="android:textAppearance">?attr/textAppearanceBodyMedium</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="Mb.InfoValue" parent="">
+        <item name="android:textAppearance">?attr/textAppearanceBodyMedium</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <!-- 主按钮（ filled，52dp 高，20dp 圆角，全宽；每屏至多一个） -->
+    <style name="Mb.Button.Filled" parent="Widget.Material3.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">@dimen/btn_height</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+        <item name="cornerRadius">@dimen/shape_btn</item>
+    </style>
+
+    <!-- 次按钮（ tonal，52dp 高，全宽） -->
+    <style name="Mb.Button.Tonal" parent="Widget.Material3.Button.TonalButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">@dimen/btn_height</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+        <item name="cornerRadius">@dimen/shape_btn</item>
+    </style>
+
+    <!-- 三级按钮（ outlined，52dp 高，全宽） -->
+    <style name="Mb.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">@dimen/btn_height</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+        <item name="cornerRadius">@dimen/shape_btn</item>
+    </style>
+
+    <!-- 四级按钮（ text，46dp 高，全宽） -->
+    <style name="Mb.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">@dimen/btn_height_text</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+        <item name="cornerRadius">@dimen/shape_btn</item>
+    </style>
+
+    <!-- 行内等宽小按钮（标签行右侧用） -->
+    <style name="Mb.Button.Text.Inline" parent="Widget.Material3.Button.TextButton">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:minHeight">@dimen/btn_height_inline</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+        <item name="cornerRadius">@dimen/shape_btn</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">?attr/colorOutline</item>
+        <item name="backgroundTint">@android:color/transparent</item>
+    </style>
+
+    <!-- 状态徽标（全圆角 pill，如「已连接」「偏旧」） -->
+    <style name="Mb.Badge" parent="">
+        <item name="android:textAppearance">?attr/textAppearanceLabelMedium</item>
+        <item name="android:textColor">?attr/colorOnPrimaryContainer</item>
+        <item name="android:background">@drawable/bg_badge_pill</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <!-- 日志 / 代码等等宽文本区（固定高度、内部滚动、细描边） -->
+    <style name="Mb.MonoBlock" parent="">
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:background">@drawable/bg_mono_block</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:scrollbars">vertical</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <!-- 顶栏标题（M3 Expressive：22sp 加粗，与「控制台」大字标题观感一致） -->
+    <style name="Mb.Toolbar.Title" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <!-- 侧栏分组标题（M3 navigation drawer 的 section header） -->
+    <style name="Mb.Drawer.Section" parent="">
+        <item name="android:textAppearance">?attr/textAppearanceLabelLarge</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <!-- 侧板形状：靠内容一侧（左）28dp 大圆角，贴屏幕一侧直角 -->
+    <style name="ShapeAppearance.MBOS.DrawerPanel" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">28dp</item>
+        <item name="cornerSizeBottomLeft">28dp</item>
+        <item name="cornerSizeTopRight">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+
+</resources>

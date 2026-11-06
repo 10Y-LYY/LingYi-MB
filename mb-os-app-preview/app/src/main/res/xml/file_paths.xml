@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  FileProvider 路径配置：仅暴露日志系统需要对外发送的目录。
+  外部私有目录（logs / crashes / reports）无需存储权限即可授权读取；
+  cacheDir/packaged 是打包生成的日志包（zip / txt）；
+  reports 是调试控制台「问题上报」生成的诊断报告（DebugReport.save）。
+-->
+<paths>
+    <external-files-path name="logs" path="logs/" />
+    <external-files-path name="crashes" path="crashes/" />
+    <external-files-path name="reports" path="reports/" />
+    <cache-path name="packaged" path="packaged/" />
+    <external-files-path name="exports" path="exports/" />
+</paths>

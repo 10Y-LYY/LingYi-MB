@@ -1,0 +1,19 @@
+灵逸 MB (micro:bit V2 客户端) 源码包
+====================================
+渠道(channel): devtest
+版本(versionName): 4.2.7-dev
+versionCode: 53
+内置固件: MB-OS v4.0.0
+许可证: MIT License
+
+说明：稳定版 / 预览版 / 开发者测试版 三渠道共用同一份源码仓库，
+差异仅在 app/build.gradle.kts 的 productFlavors 配置。
+本仓库使用 Android Gradle Plugin 构建，支持一次产出三种 flavor：
+  - stable   (com.lingyi.mbos,          4.2.7,  code 53)
+  - preview  (com.lingyi.mbos.preview,  4.2.7-preview, code 59)
+  - devtest  (com.lingyi.mbos.dev,      4.2.7-dev,     code 53)
+
+构建方式：
+  1) 配置 Android SDK（设置 ANDROID_HOME 或 local.properties 的 sdk.dir）
+  2) ./gradlew assembleStableDebug / assemblePreviewDebug / assembleDevtestDebug
+  3) 产物位于 app/build/outputs/apk/<flavor>/debug/

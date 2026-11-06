@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- M3 Expressive 按压反馈去重标记（View.setTag(key, value) 要求 key 为资源 id） -->
+    <item name="tag_press_feedback" type="id" />
+</resources>

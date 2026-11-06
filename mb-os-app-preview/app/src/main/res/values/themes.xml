@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+      灵逸 MB：安卓原生 Material 3 浅色主题（默认）
+      - 色彩：M3 官方基线取色（Primary #6750A4 紫，Secondary / Tertiary 官方伴随色）
+      - 形状：统一使用 M3 形状比例（卡片 Large 16dp / 中型 Medium 12dp）
+      - 字体：M3 默认 Roboto 字阶（Display/Headline/Title/Body/Label）
+      - 深色模式见 values-night/themes.xml（组件无需改代码自动适配）
+      设计规范：今后所有更新一律沿用本主题的 M3 令牌与组件，禁止硬编码颜色/字号。
+    -->
+    <style name="Theme.MBOS" parent="Theme.Material3.Light.NoActionBar">
+        <!-- 主色：M3 官方基线紫 -->
+        <item name="colorPrimary">#6750A4</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">#E9DDFF</item>
+        <item name="colorOnPrimaryContainer">#21005D</item>
+
+        <!-- 次色：M3 官方基线 -->
+        <item name="colorSecondary">#625B71</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="colorSecondaryContainer">#E8DEF8</item>
+        <item name="colorOnSecondaryContainer">#1E192B</item>
+
+        <!-- 第三色：M3 官方基线 -->
+        <item name="colorTertiary">#7D5260</item>
+        <item name="colorOnTertiary">#FFFFFF</item>
+        <item name="colorTertiaryContainer">#FFD8E4</item>
+        <item name="colorOnTertiaryContainer">#31111D</item>
+
+        <!-- 中性面（M3 官方基线 tonal surfaces） -->
+        <item name="colorSurface">#FFFBFE</item>
+        <item name="colorOnSurface">#1C1B1F</item>
+        <item name="colorSurfaceVariant">#E7E0EC</item>
+        <item name="colorOnSurfaceVariant">#49454F</item>
+        <item name="colorSurfaceContainerLowest">#FFFFFF</item>
+        <item name="colorSurfaceContainerLow">#F7F2FA</item>
+        <item name="colorSurfaceContainer">#F3EDF7</item>
+        <item name="colorSurfaceContainerHigh">#ECE6F0</item>
+        <item name="colorSurfaceContainerHighest">#E6E0E9</item>
+        <item name="colorSurfaceBright">#FFFBFE</item>
+        <item name="colorSurfaceDim">#DED8E1</item>
+
+        <item name="colorOutline">#79747E</item>
+        <item name="colorOutlineVariant">#CAC4D0</item>
+
+        <item name="colorError">#B3261C</item>
+        <item name="colorOnError">#FFFFFF</item>
+        <item name="colorErrorContainer">#F9DEDC</item>
+        <item name="colorOnErrorContainer">#410E0B</item>
+
+        <!-- 背景与系统栏（与表面对齐，M3 规范） -->
+        <item name="android:colorBackground">#FFFBFE</item>
+        <item name="android:windowBackground">#FFFBFE</item>
+        <item name="android:statusBarColor">?attr/colorSurface</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">?attr/colorSurface</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
+        <item name="android:enforceStatusBarContrast" tools:targetApi="29">false</item>
+        <item name="android:enforceNavigationBarContrast" tools:targetApi="29">false</item>
+    </style>
+
+    <!-- 引导页：沉浸式纯白（继承主主题全部令牌，深色模式下自动变深） -->
+    <style name="Theme.MBOS.Guide" parent="Theme.MBOS">
+        <item name="android:colorBackground">?attr/colorSurface</item>
+        <item name="android:windowBackground">?attr/colorSurface</item>
+    </style>
+
+    <!-- 预览页：继承主主题 -->
+    <style name="Theme.MBOS.Preview" parent="Theme.MBOS" />
+
+    <!--
+      ============ 配色覆盖层（设置页切换，运行时 applyStyle 强制覆盖） ============
+      每套配色替换 primary / secondary / tertiary 三个色族，中性面沿用基础主题（M3 官方）。
+      M3 官方取色即基础主题本身，无需覆盖层。深色版见 values-night/themes.xml。
+    -->
+
+    <!-- 青绿：主色青绿，次色 micro:bit 黄，第三色靛蓝（v2.x 经典配色） -->
+    <style name="ThemeOverlay.MBOS.Teal" parent="">
+        <item name="colorPrimary">#0E7C86</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">#A6EEF1</item>
+        <item name="colorOnPrimaryContainer">#002022</item>
+        <item name="colorSecondary">#6E5A00</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="colorSecondaryContainer">#FFDF9B</item>
+        <item name="colorOnSecondaryContainer">#221B00</item>
+        <item name="colorTertiary">#535D91</item>
+        <item name="colorOnTertiary">#FFFFFF</item>
+        <item name="colorTertiaryContainer">#DBE0FF</item>
+        <item name="colorOnTertiaryContainer">#111B4D</item>
+    </style>
+
+    <!-- 鎏金：主色 micro:bit 金，次色青绿，第三色靛蓝 -->
+    <style name="ThemeOverlay.MBOS.Gold" parent="">
+        <item name="colorPrimary">#7A5900</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">#FFDF9B</item>
+        <item name="colorOnPrimaryContainer">#261A00</item>
+        <item name="colorSecondary">#0E7C86</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="colorSecondaryContainer">#A6EEF1</item>
+        <item name="colorOnSecondaryContainer">#002022</item>
+        <item name="colorTertiary">#535D91</item>
+        <item name="colorOnTertiary">#FFFFFF</item>
+        <item name="colorTertiaryContainer">#DBE0FF</item>
+        <item name="colorOnTertiaryContainer">#111B4D</item>
+    </style>
+
+    <!-- 靛蓝：主色靛蓝，次色青绿，第三色鎏金 -->
+    <style name="ThemeOverlay.MBOS.Indigo" parent="">
+        <item name="colorPrimary">#535D91</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">#DBE0FF</item>
+        <item name="colorOnPrimaryContainer">#111B4D</item>
+        <item name="colorSecondary">#0E7C86</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="colorSecondaryContainer">#A6EEF1</item>
+        <item name="colorOnSecondaryContainer">#002022</item>
+        <item name="colorTertiary">#7A5900</item>
+        <item name="colorOnTertiary">#FFFFFF</item>
+        <item name="colorTertiaryContainer">#FFDF9B</item>
+        <item name="colorOnTertiaryContainer">#261A00</item>
+    </style>
+
+    <!-- 绯红：主色绯红，次色青绿，第三色靛蓝 -->
+    <style name="ThemeOverlay.MBOS.Rose" parent="">
+        <item name="colorPrimary">#9C4058</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">#FFD9E2</item>
+        <item name="colorOnPrimaryContainer">#3F001D</item>
+        <item name="colorSecondary">#0E7C86</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="colorSecondaryContainer">#A6EEF1</item>
+        <item name="colorOnSecondaryContainer">#002022</item>
+        <item name="colorTertiary">#535D91</item>
+        <item name="colorOnTertiary">#FFFFFF</item>
+        <item name="colorTertiaryContainer">#DBE0FF</item>
+        <item name="colorOnTertiaryContainer">#111B4D</item>
+    </style>
+
+    <!-- 松绿：主色松绿，次色鎏金，第三色靛蓝 -->
+    <style name="ThemeOverlay.MBOS.Forest" parent="">
+        <item name="colorPrimary">#3F6837</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">#BFF3AC</item>
+        <item name="colorOnPrimaryContainer">#062100</item>
+        <item name="colorSecondary">#7A5900</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="colorSecondaryContainer">#FFDF9B</item>
+        <item name="colorOnSecondaryContainer">#261A00</item>
+        <item name="colorTertiary">#535D91</item>
+        <item name="colorOnTertiary">#FFFFFF</item>
+        <item name="colorTertiaryContainer">#DBE0FF</item>
+        <item name="colorOnTertiaryContainer">#111B4D</item>
+    </style>
+
+    <!--
+      ============ 窗口转场动画（设置页「界面过渡动画」开关，默认开） ============
+      M3 shared-axis X：压栈右滑入 / 出栈左揭示，退出侧淡出。
+      关闭时 BaseActivity 套用 None 版（零时长占位，等效无动画）。
+    -->
+    <style name="WindowAnimation.MBOS" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/mbos_activity_open_enter</item>
+        <item name="android:activityOpenExitAnimation">@anim/mbos_activity_open_exit</item>
+        <item name="android:activityCloseEnterAnimation">@anim/mbos_activity_close_enter</item>
+        <item name="android:activityCloseExitAnimation">@anim/mbos_activity_close_exit</item>
+    </style>
+
+    <style name="WindowAnimation.MBOS.None" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/mbos_anim_none</item>
+        <item name="android:activityOpenExitAnimation">@anim/mbos_anim_none</item>
+        <item name="android:activityCloseEnterAnimation">@anim/mbos_anim_none</item>
+        <item name="android:activityCloseExitAnimation">@anim/mbos_anim_none</item>
+    </style>
+</resources>

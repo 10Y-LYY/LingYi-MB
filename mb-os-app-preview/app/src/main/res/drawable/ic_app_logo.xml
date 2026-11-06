@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  应用内展示用 Logo（引导页 / 关于页）：透明底，白色「M」+ 金色三点 LED。
+  设计为置于圆形/圆角彩色容器内居中显示（不自带满铺背景，避免方角溢出容器）。
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- 「M」字母：粗圆头白色描边 -->
+    <path
+        android:pathData="M13,34 L13,16 L24,27 L35,16 L35,34"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="7"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- micro:bit 金色 LED 点缀（底部一排三点） -->
+    <path
+        android:fillColor="#F2A900"
+        android:pathData="M19.5,40a3,3 0 1,0 6,0a3,3 0 1,0 -6,0ZM27.5,40a3,3 0 1,0 6,0a3,3 0 1,0 -6,0Z" />
+</vector>
