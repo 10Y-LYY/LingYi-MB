@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  无线指针（陀螺仪鼠标）无障碍服务配置。
+  canPerformGestures = true：允许本服务向任意 App 派发真实触摸手势。
+-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeWindowContentChanged|typeWindowStateChanged"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagDefault|flagIncludeNotImportantViews"
+    android:canPerformGestures="true"
+    android:description="@string/pointer_service_desc"
+    android:summary="@string/pointer_service_desc" />

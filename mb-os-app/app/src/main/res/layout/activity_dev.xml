@@ -1,0 +1,689 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  开发者页（M3 Expressive，v4.2 结构重排）：
+  - 卡片全部走 Mb.Page.Card / Mb.Page.CardBody（20dp 圆角、colorSurface、零 elevation、无描边）；
+  - 原卡内标题上移为 Mb.SectionHeader 分区标题（卡片外），文案原地保留不改写；
+  - 20+ 按钮统一 Mb.Button.* 四档：卡内主操作用 Tonal、次操作 Outlined/Text、
+    指令控制台发送用 Filled、行内小操作用 Text.Inline；「💥 强制崩溃」保留 id
+    与 error 着色（Kotlin 侧按 BuildConfig.DEBUG 控制显隐）；
+  - 指令控制台日志区 ScrollView → NestedScrollView（内部 tvLog id 保留），
+    避免与页面外层 NestedScrollView 嵌套滚动冲突；
+  - 传感器 mock 长字段保留原文，EditText 限单行 + 省略号，杜绝横向溢出；
+  - 「模拟连接」与「悬浮窗」两卡功能重叠但全部按钮 id 原样保留（行为归 Kotlin）。
+  全部 view id 与 DeveloperActivity 的 ViewBinding 引用一一对应，禁止删改。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurfaceContainerLow"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:title="@string/dev_title" />
+
+    <!-- 大屏内容封顶居中（M3 规范：单列 ≤840dp，手机窄屏零副作用） -->
+    <com.lingyi.mbos.ui.MaxWidthFrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:maxWidth="@dimen/content_max_width">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:clipToPadding="false"
+            android:scrollbars="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/page_gutter_h"
+                android:paddingTop="10dp"
+                android:paddingEnd="@dimen/page_gutter_h"
+                android:paddingBottom="28dp">
+
+                <TextView
+                    android:id="@+id/tvDevNote"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="3dp"
+                    android:text="@string/dev_note"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <!-- ============ 应用信息 ============ -->
+                <TextView
+                    style="@style/Mb.SectionHeader"
+                    android:text="应用信息" />
+
+                <com.google.android.material.card.MaterialCardView style="@style/Mb.Page.Card">
+
+                    <LinearLayout style="@style/Mb.Page.CardBody">
+
+                        <TextView
+                            android:id="@+id/tvInfo"
+                            style="@style/Mb.MonoBlock"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textIsSelectable="true" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnCopyDiag"
+                            style="@style/Mb.Button.Tonal"
+                            android:layout_marginTop="12dp"
+                            android:text="@string/dev_copy_diag" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnViewCrash"
+                            style="@style/Mb.Button.Outlined"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/dev_view_crash" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- ============ 连接与设备诊断 ============ -->
+                <TextView
+                    style="@style/Mb.SectionHeader"
+                    android:text="连接与设备诊断" />
+
+                <com.google.android.material.card.MaterialCardView style="@style/Mb.Page.Card">
+
+                    <LinearLayout style="@style/Mb.Page.CardBody">
+
+                        <TextView
+                            android:id="@+id/tvConn"
+                            style="@style/Mb.MonoBlock"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textIsSelectable="true" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnRefreshConn"
+                            style="@style/Mb.Button.Outlined"
+                            android:layout_marginTop="12dp"
+                            android:text="@string/dev_conn_refresh" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnListUsb"
+                            style="@style/Mb.Button.Outlined"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/dev_list_usb" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnListBle"
+                            style="@style/Mb.Button.Outlined"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/dev_list_ble" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnOpenGuide"
+                            style="@style/Mb.Button.Text"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/dev_conn_open_guide" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- ============ 指令控制台 ============ -->
+                <TextView
+                    style="@style/Mb.SectionHeader"
+                    android:text="@string/dev_console_title" />
+
+                <com.google.android.material.card.MaterialCardView style="@style/Mb.Page.Card">
+
+                    <LinearLayout style="@style/Mb.Page.CardBody">
+
+                        <!-- Kotlin 侧动态追加指令快捷按钮（containerCommands id 契约） -->
+                        <LinearLayout
+                            android:id="@+id/containerCommands"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilCmd"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:hint="@string/dev_cmd_hint">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etCmd"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="text"
+                                android:text="SCROLL:hello" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnSend"
+                                style="@style/Mb.Button.Filled"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:text="@string/dev_send" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnClearLog"
+                                style="@style/Mb.Button.Text.Inline"
+                                android:layout_marginStart="8dp"
+                                android:text="@string/dev_log_clear" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnCopyLog"
+                                style="@style/Mb.Button.Text.Inline"
+                                android:layout_marginStart="8dp"
+                                android:text="@string/dev_copy_log" />
+                        </LinearLayout>
+
+                        <!-- 日志区：NestedScrollView（tvLog id 保留），与外层页面滚动解耦 -->
+                        <androidx.core.widget.NestedScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:layout_marginTop="10dp"
+                            android:background="?attr/colorSurfaceContainerLow"
+                            android:padding="8dp">
+
+                            <TextView
+                                android:id="@+id/tvLog"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="monospace"
+                                android:text="@string/dev_log_empty"
+                                android:textAppearance="?attr/textAppearanceBodySmall"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:textIsSelectable="true" />
+                        </androidx.core.widget.NestedScrollView>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- ============ 传感器数据模拟 ============ -->
+                <TextView
+                    style="@style/Mb.SectionHeader"
+                    android:text="@string/dev_mock_title" />
+
+                <com.google.android.material.card.MaterialCardView style="@style/Mb.Page.Card">
+
+                    <LinearLayout style="@style/Mb.Page.CardBody">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/dev_mock_hint"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+
+                        <!-- 长字段保留原文；单行 + 省略号，杜绝横向溢出 -->
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:hint="A:0|B:1|T:25|L:120|X:10|Y:-5|Z:1000|C:90|G:shake">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etMock"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:inputType="text"
+                                android:maxLines="1"
+                                android:text="A:0|B:1|T:25|L:120|X:10|Y:-5|Z:1000|C:90|G:shake" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnInject"
+                            style="@style/Mb.Button.Tonal"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/dev_mock_inject" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnInjectInfo"
+                            style="@style/Mb.Button.Outlined"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/dev_mock_info" />
+
+                        <!-- 复现用户实况：板载只刷了裸 MicroPython、未安装 MB-OS 助手脚本 -->
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnInjectInfoBare"
+                            style="@style/Mb.Button.Outlined"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/dev_mock_info_bare" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- ============ 协议自检 ============ -->
+                <TextView
+                    style="@style/Mb.SectionHeader"
+                    android:text="@string/dev_selfcheck_title" />
+
+                <com.google.android.material.card.MaterialCardView style="@style/Mb.Page.Card">
+
+                    <LinearLayout style="@style/Mb.Page.CardBody">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/dev_selfcheck_hint"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSelfCheck"
+                            style="@style/Mb.Button.Tonal"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/dev_selfcheck_run" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- ============ 模拟连接状态 ============ -->
+                <TextView
+                    style="@style/Mb.SectionHeader"
+                    android:text="@string/dev_sim_title" />
+
+                <com.google.android.material.card.MaterialCardView style="@style/Mb.Page.Card">
+
+                    <LinearLayout style="@style/Mb.Page.CardBody">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/dev_sim_hint"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnSimConnect"
+                                style="@style/Mb.Button.Tonal"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:text="@string/dev_sim_connect" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnSimDisconnect"
+                                style="@style/Mb.Button.Outlined"
+                                android:layout_width="0dp"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:text="@string/dev_sim_disconnect" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- ============ micro:bit V2 模拟器（悬浮窗） ============ -->
+                <TextView
+                    style="@style/Mb.SectionHeader"
+                    android:text="@string/dev_simulator_title" />
+
+                <com.google.android.material.card.MaterialCardView style="@style/Mb.Page.Card">
+
+                    <LinearLayout style="@style/Mb.Page.CardBody">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/dev_simulator_hint"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+
+                        <TextView
+                            android:id="@+id/tvSimulatorStatus"
+                            style="@style/Mb.MonoBlock"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="-"
+                            android:textIsSelectable="true" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnSimOverlay"
+                                style="@style/Mb.Button.Tonal"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:text="@string/dev_simulator_overlay_open" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnSimConnectReal"
+                                style="@style/Mb.Button.Outlined"
+                                android:layout_width="0dp"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:text="@string/dev_simulator_connect" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnSimDisconnectReal"
+                                style="@style/Mb.Button.Outlined"
+                                android:layout_width="0dp"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:text="@string/dev_simulator_disconnect" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- ============ 页面跳转 ============ -->
+                <TextView
+                    style="@style/Mb.SectionHeader"
+                    android:text="@string/dev_nav_title" />
+
+                <com.google.android.material.card.MaterialCardView style="@style/Mb.Page.Card">
+
+                    <LinearLayout style="@style/Mb.Page.CardBody">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnOpenConsole"
+                            style="@style/Mb.Button.Tonal"
+                            android:text="@string/dev_nav_console" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnOpenPreview"
+                            style="@style/Mb.Button.Outlined"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/dev_nav_preview" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnOpenCustomFlash"
+                            style="@style/Mb.Button.Outlined"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/dev_nav_customflash" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnOpenAbout"
+                            style="@style/Mb.Button.Text"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/dev_nav_about" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- ============ 开发者测试版专属工具箱（仅 devtest flavor 可见） ============ -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardDevTestTools"
+                    style="@style/Mb.Page.Card"
+                    android:visibility="gone">
+
+                    <LinearLayout style="@style/Mb.Page.CardBody">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnOpenDevTools"
+                            style="@style/Mb.Button.Filled"
+                            android:text="@string/dev_tools_title" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- ============ 内置内容查看 ============ -->
+                <TextView
+                    style="@style/Mb.SectionHeader"
+                    android:text="@string/dev_content_title" />
+
+                <com.google.android.material.card.MaterialCardView style="@style/Mb.Page.Card">
+
+                    <LinearLayout style="@style/Mb.Page.CardBody">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnViewFirmware"
+                            style="@style/Mb.Button.Outlined"
+                            android:text="@string/dev_view_firmware" />
+
+                        <!-- Kotlin 侧动态追加内置游戏入口（containerGames id 契约） -->
+                        <LinearLayout
+                            android:id="@+id/containerGames"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:orientation="vertical" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnListAssets"
+                            style="@style/Mb.Button.Text"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/dev_assets_run" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- ============ 更新检查调试 ============ -->
+                <TextView
+                    style="@style/Mb.SectionHeader"
+                    android:text="@string/dev_update_title" />
+
+                <com.google.android.material.card.MaterialCardView style="@style/Mb.Page.Card">
+
+                    <LinearLayout style="@style/Mb.Page.CardBody">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnDebugUpdate"
+                                style="@style/Mb.Button.Tonal"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:text="@string/dev_update_run" />
+
+                            <com.google.android.material.progressindicator.CircularProgressIndicator
+                                android:id="@+id/pbDebugUpdate"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_marginStart="12dp"
+                                android:indeterminate="true"
+                                android:visibility="gone"
+                                app:indicatorColor="?attr/colorPrimary"
+                                app:indicatorSize="20dp" />
+                        </LinearLayout>
+
+                        <!-- 更新通道：下拉选择稳定版 / 预览版（version.json / version-beta.json） -->
+                        <com.lingyi.mbos.ui.UpdateChannelPicker
+                            android:id="@+id/channelPicker"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp" />
+
+                        <TextView
+                            android:id="@+id/tvUpdateResult"
+                            style="@style/Mb.MonoBlock"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="-"
+                            android:textIsSelectable="true" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- ============ 稳定性与调试（4.1.0-preview） ============ -->
+                <TextView
+                    style="@style/Mb.SectionHeader"
+                    android:text="稳定性与调试" />
+
+                <com.google.android.material.card.MaterialCardView style="@style/Mb.Page.Card">
+
+                    <LinearLayout style="@style/Mb.Page.CardBody">
+
+                        <TextView
+                            style="@style/Mb.CardDesc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="全局悬浮窗调试控制台 + 问题上报检查器，任意界面一点即达" />
+
+                        <!-- 悬浮窗调试控制台 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    style="@style/Mb.CardTitle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="悬浮窗调试控制台" />
+
+                                <TextView
+                                    style="@style/Mb.CardDesc"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:text="日志 / 连接 / 抓包 / 指令 / 元素 / 性能 / 功能直达 + 问题上报" />
+                            </LinearLayout>
+
+                            <com.google.android.material.materialswitch.MaterialSwitch
+                                android:id="@+id/swDebugConsole"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+
+                        <!-- 抓包记录 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    style="@style/Mb.CardTitle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="抓包记录" />
+
+                                <TextView
+                                    style="@style/Mb.CardDesc"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:text="记录收发数据流（环形缓冲 400 条），供悬浮窗「抓包」页签查看" />
+                            </LinearLayout>
+
+                            <com.google.android.material.materialswitch.MaterialSwitch
+                                android:id="@+id/swPacketCapture"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+
+                        <!-- ANR 看门狗 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    style="@style/Mb.CardTitle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="ANR 看门狗" />
+
+                                <TextView
+                                    style="@style/Mb.CardDesc"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:text="主线程卡顿超 5 秒自动记录现场（线程栈 + 界面树）" />
+                            </LinearLayout>
+
+                            <com.google.android.material.materialswitch.MaterialSwitch
+                                android:id="@+id/swAnrWatchdog"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnDropDrill"
+                            style="@style/Mb.Button.Tonal"
+                            android:layout_marginTop="14dp"
+                            android:text="📡 掉线演练（验证自动重连）" />
+
+                        <!-- 保留 id：Kotlin 按 BuildConfig.DEBUG 控制显隐 -->
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnForceCrash"
+                            style="@style/Mb.Button.Outlined"
+                            android:layout_marginTop="8dp"
+                            android:text="💥 强制崩溃（演练崩溃恢复）"
+                            android:textColor="?attr/colorError"
+                            app:strokeColor="?attr/colorError" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnBuildInfo"
+                            style="@style/Mb.Button.Text"
+                            android:layout_marginTop="6dp"
+                            android:text="🔧 构建信息（ABI / 版本 / 签名）" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- ============ 调试状态重置 ============ -->
+                <TextView
+                    style="@style/Mb.SectionHeader"
+                    android:text="@string/dev_reset_title" />
+
+                <com.google.android.material.card.MaterialCardView style="@style/Mb.Page.Card">
+
+                    <LinearLayout style="@style/Mb.Page.CardBody">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnResetFirstLaunch"
+                            style="@style/Mb.Button.Outlined"
+                            android:text="@string/dev_reset_first_launch" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnClearUpdateCache"
+                            style="@style/Mb.Button.Outlined"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/dev_clear_update_cache" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnDisableDev"
+                            style="@style/Mb.Button.Text"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/dev_close" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </com.lingyi.mbos.ui.MaxWidthFrameLayout>
+</LinearLayout>

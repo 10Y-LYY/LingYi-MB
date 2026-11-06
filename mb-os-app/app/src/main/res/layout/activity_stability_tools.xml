@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  稳定性工具二级页（4.1.1-preview → v4.2 设计基准页微调）：
+  引导页「问号」入口的目的地。
+  与其余页面同构：MaterialToolbar + 大屏内容封顶 + NestedScrollView。
+  M3 Expressive：20dp 大圆角卡（shape_card）、圆形图标容器（bg_icon_circle + 矢量图标）、
+  整卡按压反馈、箭头引导；分区标题 Mb.SectionHeader。
+  本次仅对齐新令牌：emoji 图标容器 → bg_icon_circle + ic_sensortest / ic_help / ic_flash，
+  卡片内边距 16dp（Mb.Page.CardBody），卡间/区间距走 space_card / space_section_top。
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurfaceContainerLow"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:title="稳定性工具" />
+
+    <com.lingyi.mbos.ui.MaxWidthFrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:maxWidth="@dimen/content_max_width">
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:clipToPadding="false"
+            android:scrollbars="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/page_gutter_h"
+                android:paddingTop="12dp"
+                android:paddingEnd="@dimen/page_gutter_h"
+                android:paddingBottom="32dp">
+
+                <!-- 页面导语 -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:lineSpacingExtra="3dp"
+                    android:text="连不上、怀疑固件有问题、或者应用行为异常时，按下面的工具逐项排查。每一项都会把当前真实状态摊开给你看。"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <!-- 连接向导：三步进度一目了然 -->
+                <com.google.android.material.card.MaterialCardView style="@style/Mb.Page.Card">
+
+                    <LinearLayout style="@style/Mb.Page.CardBody">
+
+                        <TextView
+                            style="@style/Mb.CardTitle"
+                            android:text="连接向导" />
+
+                        <TextView
+                            style="@style/Mb.CardDesc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="按步骤来，连不上时一眼看出卡在哪一步" />
+
+                        <LinearLayout
+                            android:id="@+id/llSteps"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:orientation="horizontal" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 工具分区标题 -->
+                <TextView
+                    style="@style/Mb.SectionHeader"
+                    android:text="排查工具" />
+
+                <!-- 启动自检 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardSelfCheck"
+                    style="@style/Mb.Page.Card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="16dp">
+
+                        <!-- bg_icon_circle + ic_sensortest 矢量（替代原「🩺」emoji 圆卡） -->
+                        <FrameLayout
+                            android:layout_width="@dimen/icon_circle"
+                            android:layout_height="@dimen/icon_circle"
+                            android:background="@drawable/bg_icon_circle">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_gravity="center"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:contentDescription="启动自检"
+                                app:srcCompat="@drawable/ic_sensortest"
+                                app:tint="?attr/colorOnPrimaryContainer" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/Mb.CardTitle"
+                                android:text="启动自检" />
+
+                            <TextView
+                                style="@style/Mb.CardDesc"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="权限 / 蓝牙 / 存储空间一键体检，哪项没过直接告诉你" />
+                        </LinearLayout>
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:contentDescription="进入"
+                            app:srcCompat="@drawable/ic_chevron_right"
+                            app:tint="?attr/colorOnSurfaceVariant" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 常见问题速查 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardFaq"
+                    style="@style/Mb.Page.Card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="16dp">
+
+                        <!-- bg_icon_circle + ic_help 矢量（替代原「❓」emoji 圆卡，保留 secondary 色调） -->
+                        <FrameLayout
+                            android:layout_width="@dimen/icon_circle"
+                            android:layout_height="@dimen/icon_circle"
+                            android:background="@drawable/bg_icon_circle"
+                            android:backgroundTint="?attr/colorSecondaryContainer">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_gravity="center"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:contentDescription="常见问题速查"
+                                app:srcCompat="@drawable/ic_help"
+                                app:tint="?attr/colorOnSecondaryContainer" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/Mb.CardTitle"
+                                android:text="常见问题速查" />
+
+                            <TextView
+                                style="@style/Mb.CardDesc"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="连不上 / 闪退 / 数据不同步，先在这里找现成答案" />
+                        </LinearLayout>
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:contentDescription="进入"
+                            app:srcCompat="@drawable/ic_chevron_right"
+                            app:tint="?attr/colorOnSurfaceVariant" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 固件版本对比 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardFwCompare"
+                    style="@style/Mb.Page.Card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="16dp">
+
+                        <!-- bg_icon_circle + ic_flash 矢量（替代原「🔍」emoji 圆卡，保留 tertiary 色调） -->
+                        <FrameLayout
+                            android:layout_width="@dimen/icon_circle"
+                            android:layout_height="@dimen/icon_circle"
+                            android:background="@drawable/bg_icon_circle"
+                            android:backgroundTint="?attr/colorTertiaryContainer">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_gravity="center"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:contentDescription="固件版本对比"
+                                app:srcCompat="@drawable/ic_flash"
+                                app:tint="?attr/colorOnTertiaryContainer" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/Mb.CardTitle"
+                                android:text="固件版本对比" />
+
+                            <TextView
+                                style="@style/Mb.CardDesc"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="板载固件 vs 本 App 内置版本，旧了该不该重刷一看便知" />
+                        </LinearLayout>
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:contentDescription="进入"
+                            app:srcCompat="@drawable/ic_chevron_right"
+                            app:tint="?attr/colorOnSurfaceVariant" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 离线可用说明 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_section_top"
+                    app:cardBackgroundColor="?attr/colorTertiaryContainer"
+                    app:cardCornerRadius="@dimen/shape_card"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp">
+
+                    <LinearLayout style="@style/Mb.Page.CardBody">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="📴 当前离线，核心功能照常可用"
+                            android:textAppearance="?attr/textAppearanceTitleSmall"
+                            android:textColor="?attr/colorOnTertiaryContainer"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:lineSpacingExtra="3dp"
+                            android:text="连接 / 控制 / 预览 / 指针都不需要网络；仅「检查更新」需要联网，恢复网络后可再试。"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
+                            android:textColor="?attr/colorOnTertiaryContainer" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 仍然没解决 -->
+                <com.google.android.material.card.MaterialCardView style="@style/Mb.Page.Card">
+
+                    <LinearLayout style="@style/Mb.Page.CardBody">
+
+                        <TextView
+                            style="@style/Mb.CardTitle"
+                            android:text="上面都试过还是不行？" />
+
+                        <TextView
+                            style="@style/Mb.CardDesc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="到「关于 → 错误日志与反馈」一键打包发送；开发者可在开发者页打开悬浮窗调试控制台，用「上报」页签把当前界面、操作轨迹和日志一起带给开发者。" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/space_section_top"
+                    android:text="10Y-灵逸云科技 · 灵逸 MB"
+                    android:textAppearance="?attr/textAppearanceLabelSmall"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </com.lingyi.mbos.ui.MaxWidthFrameLayout>
+</LinearLayout>

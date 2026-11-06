@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- LED 画板：平板上格子略大 -->
+    <dimen name="led_cell">56dp</dimen>
+    <dimen name="led_cell_margin">4dp</dimen>
+
+    <!-- 平板 / 折叠屏内屏：大号页边距（Material 大屏 gutter 规范） -->
+    <dimen name="page_gutter_h">72dp</dimen>
+    <dimen name="page_gutter_h_wide">88dp</dimen>
+
+    <!-- 预览页 micro:bit 大图：平板放宽 -->
+    <dimen name="big_board_max_height">340dp</dimen>
+
+    <!-- 控制台设备大图：平板 / 折叠内屏相对收敛，留白加大 -->
+    <dimen name="console_board_image_width">128dp</dimen>
+    <dimen name="console_board_image_margin_start">24dp</dimen>
+</resources>

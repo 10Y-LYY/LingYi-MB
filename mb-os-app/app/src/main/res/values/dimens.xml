@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- LED 画板：单个「像素」尺寸与间距（5×5 点阵） -->
+    <dimen name="led_cell">44dp</dimen>
+    <dimen name="led_cell_margin">3dp</dimen>
+
+    <!--
+      M3 Expressive 形状令牌（v4.2.1 视觉收敛）：
+      页面卡 16dp（大圆角但有清晰描边，不再像无边框的弯块）；
+      次级容器 12dp；卡内块 10dp；按钮 18dp（全宽胶囊但不夸张）。
+    -->
+    <dimen name="shape_card">16dp</dimen>
+    <dimen name="shape_card_medium">12dp</dimen>
+    <dimen name="shape_inner">10dp</dimen>
+    <dimen name="shape_btn">18dp</dimen>
+
+    <!-- 间距令牌 -->
+    <dimen name="space_card">12dp</dimen>
+    <dimen name="space_section_top">20dp</dimen>
+
+    <!-- 按钮高度令牌（M3 Expressive：全宽 52dp / 行内 40dp / 文字 46dp） -->
+    <dimen name="btn_height">52dp</dimen>
+    <dimen name="btn_height_inline">40dp</dimen>
+    <dimen name="btn_height_text">46dp</dimen>
+
+    <!-- 圆形图标容器 -->
+    <dimen name="icon_circle">46dp</dimen>
+
+    <!--
+      页面水平边距（手机 / 平板分档）：
+      手机 18dp；sw600dp+（平板 / 折叠屏内屏）72dp，宽屏不拉伸内容。
+      宽边距版用于引导页 / 自定义刷入页（原 24dp）。
+    -->
+    <dimen name="page_gutter_h">18dp</dimen>
+    <dimen name="page_gutter_h_wide">24dp</dimen>
+
+    <!-- 预览页 micro:bit 大图最大高度（平板放宽到 340dp） -->
+    <dimen name="big_board_max_height">260dp</dimen>
+
+    <!--
+      控制台页设备大图：宽度与左侧留白（大屏分档收敛）。
+      高度由图片真实宽高比自适应（adjustViewBounds），宽度封顶避免宽屏上头重脚轻。
+    -->
+    <dimen name="console_board_image_width">150dp</dimen>
+    <dimen name="console_board_image_margin_start">16dp</dimen>
+
+    <!--
+      单列内容宽度上限（Material 3 大屏规范）：
+      折叠屏内屏 / 平板等超宽屏上内容封顶居中，两侧留白吸收剩余宽度，
+      避免长条卡片与过宽正文行。窄屏（< 840dp）无副作用。
+    -->
+    <dimen name="content_max_width">840dp</dimen>
+</resources>
