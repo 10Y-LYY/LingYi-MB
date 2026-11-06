@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      MaxWidthFrameLayout：大屏（折叠屏内屏 / 平板）内容宽度封顶容器。
+      Material 3 大屏规范：单列内容不超过 840dp，超出部分由两侧留白（gutter）吸收，
+      避免超宽屏上卡片/文字被拉成难以阅读的长条。
+      用法：把滚动内容包进来，子视图加 android:layout_gravity="center_horizontal"。
+    -->
+    <declare-styleable name="MaxWidthFrameLayout">
+        <attr name="maxWidth" format="dimension" />
+    </declare-styleable>
+</resources>

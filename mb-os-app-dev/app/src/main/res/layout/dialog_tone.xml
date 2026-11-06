@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  音调对话框（M3 Expressive）：
+  根 padding 与 M3Kit.dialogRoot 语义一致（24/16/24/8）；
+  两个输入框 OutlinedBox 样式保持（与 dialog_plot / dialog_input 一致）；
+  播放按钮高度走 btn_height 令牌。保留全部 id：etFreq/etDur/btnPlay。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="24dp"
+    android:paddingTop="16dp"
+    android:paddingEnd="24dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/func_tone"
+        android:textAppearance="?attr/textAppearanceTitleLarge"
+        android:textColor="?attr/colorOnSurface"
+        android:textStyle="bold" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="@string/freq_hz">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etFreq"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:text="440" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="@string/duration_ms">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etDur"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:text="500" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnPlay"
+        style="@style/Mb.Button.Filled"
+        android:layout_marginTop="18dp"
+        android:text="@string/play" />
+</LinearLayout>

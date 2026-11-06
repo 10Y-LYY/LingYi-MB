@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  主控台（v4.2.4 M3 Expressive 重排）：
+
+  ① 顶栏：MaterialToolbar，左侧三线开「右侧栏」（原右上角溢出菜单整体迁入侧栏）
+  ② 内容（MaxWidthFrameLayout ≤840dp + NestedScrollView）：
+     1) 设备 Hero 卡：标题 / 状态 / 徽标 + 右侧开发板大图 → 预览模式主按钮（整卡通宽）
+        → 未连接时紧随其下的灰色小字「未连接 · 点按重新连接」提示（点击重连）
+        → 底部连接状态行（圆形图标 + 设备状态 + 自动重连提示）
+     2) 快捷入口：两张可自定义的大方格卡（默认 LED 画板 / 表情库），标题右侧「自定义」
+     3) 功能：Mb.SectionHeader + funcList 动态行 / 分类大卡
+  ③ 侧栏：右侧抽屉（MaterialCardView 圆角侧板），头部 Logo + 设备状态 + 设备/更多两组入口
+-->
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurfaceContainerLow"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- 顶栏：原生 MaterialToolbar（左侧三线开侧栏，不再有右上角溢出菜单） -->
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_menu"
+            app:navigationContentDescription="@string/drawer_open"
+            app:title="@string/dash_title"
+            app:titleTextAppearance="@style/Mb.Toolbar.Title" />
+
+        <!-- 大屏内容封顶居中（M3 规范：单列 ≤840dp，手机窄屏零副作用） -->
+        <com.lingyi.mbos.ui.MaxWidthFrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            app:maxWidth="@dimen/content_max_width">
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:clipToPadding="false"
+                android:scrollbars="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/page_gutter_h"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="@dimen/page_gutter_h"
+                    android:paddingBottom="28dp">
+
+                    <!-- ============ ① 设备 Hero 卡 ============ -->
+                    <com.google.android.material.card.MaterialCardView style="@style/Mb.Page.Card">
+
+                        <LinearLayout style="@style/Mb.Page.CardBody">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="micro:bit V2"
+                                        android:textAppearance="?attr/textAppearanceHeadlineSmall"
+                                        android:textColor="?attr/colorOnSurface"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:id="@+id/tvDevState"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="4dp"
+                                        android:text="@string/status_disconnected"
+                                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                                        android:textColor="?attr/colorOnSurfaceVariant" />
+
+                                    <!-- 在线 / 离线状态徽标：Mb.Badge 全圆角 pill 语义 -->
+                                    <com.google.android.material.card.MaterialCardView
+                                        android:id="@+id/statusBadge"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="10dp"
+                                        app:cardBackgroundColor="?attr/colorSurfaceVariant"
+                                        app:cardCornerRadius="@dimen/shape_btn"
+                                        app:cardElevation="0dp"
+                                        app:strokeWidth="0dp">
+
+                                        <TextView
+                                            android:id="@+id/tvBadge"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:paddingStart="12dp"
+                                            android:paddingTop="5dp"
+                                            android:paddingEnd="12dp"
+                                            android:paddingBottom="5dp"
+                                            android:text="@string/offline"
+                                            android:textAppearance="?attr/textAppearanceLabelLarge"
+                                            android:textColor="?attr/colorOnSurfaceVariant"
+                                            android:textStyle="bold" />
+                                    </com.google.android.material.card.MaterialCardView>
+                                </LinearLayout>
+
+                                <!-- 开发板大图：高度按真实宽高比自适应（adjustViewBounds），
+                                     与左侧标题块垂直居中，右上角留白不再压住主按钮 -->
+                                <ImageView
+                                    android:id="@+id/boardImage"
+                                    android:layout_width="@dimen/console_board_image_width"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginStart="@dimen/console_board_image_margin_start"
+                                    android:adjustViewBounds="true"
+                                    android:contentDescription="@string/app_name"
+                                    android:maxWidth="@dimen/console_board_image_width"
+                                    android:scaleType="fitCenter"
+                                    android:src="@drawable/microbit_v2" />
+                            </LinearLayout>
+
+                            <!-- 主 CTA：整卡通宽，左右与卡片内边距对齐（不再与右侧大图挤在一行） -->
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnViewAll"
+                                style="@style/Mb.Button.Filled"
+                                android:layout_marginTop="16dp"
+                                android:text="@string/console_preview_cta"
+                                app:icon="@drawable/ic_info"
+                                app:iconGravity="textStart" />
+
+                            <!-- 未连接轻提示：灰色小字，点击重新连接（华为运动健康式，不弹窗、不抢眼） -->
+                            <TextView
+                                android:id="@+id/tvConnectHint"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:gravity="center"
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:text="@string/console_connect_hint"
+                                android:textAppearance="?attr/textAppearanceLabelLarge"
+                                android:textColor="?attr/colorOnSurfaceVariant" />
+
+                            <!-- 分割线：设备区 / 状态区 -->
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="12dp"
+                                android:background="?attr/colorOutlineVariant" />
+
+                            <!-- 设备状态行：圆形图标容器 + 副状态 + 自动重连提示 -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:id="@+id/deviceIconWrap"
+                                    android:layout_width="40dp"
+                                    android:layout_height="40dp"
+                                    app:cardBackgroundColor="?attr/colorSurfaceVariant"
+                                    app:cardCornerRadius="20dp"
+                                    app:cardElevation="0dp"
+                                    app:strokeWidth="0dp">
+
+                                    <androidx.appcompat.widget.AppCompatImageView
+                                        android:layout_width="22dp"
+                                        android:layout_height="22dp"
+                                        android:layout_gravity="center"
+                                        app:srcCompat="@drawable/ic_bluetooth"
+                                        app:tint="?attr/colorOnSurfaceVariant" />
+                                </com.google.android.material.card.MaterialCardView>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="12dp"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/tvDeviceSub"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/status_disconnected"
+                                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                                        android:textColor="?attr/colorOnSurface" />
+
+                                    <TextView
+                                        android:id="@+id/tvAutoReconnect"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="2dp"
+                                        android:textAppearance="?attr/textAppearanceBodySmall"
+                                        android:textColor="?attr/colorPrimary"
+                                        android:visibility="gone" />
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- ============ ② 快捷入口（可自定义两张卡） ============ -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/Mb.SectionHeader"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/console_quick_section" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnEditQuick"
+                            style="@style/Mb.Button.Text.Inline"
+                            android:text="@string/console_quick_edit"
+                            app:icon="@drawable/ic_edit"
+                            app:iconGravity="textStart"
+                            app:iconSize="16dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/quickRow"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal" />
+
+                    <!-- ============ ③ 功能分区 ============ -->
+                    <TextView
+                        style="@style/Mb.SectionHeader"
+                        android:text="@string/console_features" />
+
+                    <com.google.android.material.card.MaterialCardView style="@style/Mb.Page.Card">
+
+                        <LinearLayout
+                            android:id="@+id/funcList"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingTop="4dp"
+                            android:paddingBottom="4dp" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+        </com.lingyi.mbos.ui.MaxWidthFrameLayout>
+    </LinearLayout>
+
+    <!-- ============ 右侧栏（M3 侧板：大圆角 + ContainerLow 底 + 分组条目） ============ -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/navPanel"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="0dp"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.MBOS.DrawerPanel"
+        app:strokeWidth="0dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- 头部：应用图标 + 名称 + 设备状态 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="24dp"
+                android:paddingTop="28dp"
+                android:paddingEnd="24dp"
+                android:paddingBottom="18dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    app:cardBackgroundColor="?attr/colorPrimary"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:layout_gravity="center"
+                        app:srcCompat="@drawable/ic_app_logo" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:text="@string/app_name"
+                    android:textAppearance="?attr/textAppearanceTitleLarge"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvDrawerDevice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/status_disconnected"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <!-- 设备状态胶囊：小圆点 + 文案，连接成功即变主色容器 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/drawerStateChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    app:cardBackgroundColor="?attr/colorSurfaceVariant"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="12dp"
+                        android:paddingTop="6dp"
+                        android:paddingEnd="14dp"
+                        android:paddingBottom="6dp">
+
+                        <View
+                            android:id="@+id/drawerStateDot"
+                            android:layout_width="8dp"
+                            android:layout_height="8dp"
+                            android:background="@drawable/bg_drawer_dot" />
+
+                        <TextView
+                            android:id="@+id/tvDrawerState"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="@string/drawer_state_disconnected"
+                            android:textAppearance="?attr/textAppearanceLabelMedium"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:background="?attr/colorOutlineVariant" />
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:clipToPadding="false"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="12dp"
+                    android:paddingTop="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="12dp">
+
+                    <TextView
+                        style="@style/Mb.Drawer.Section"
+                        android:text="@string/drawer_group_device" />
+
+                    <LinearLayout
+                        android:id="@+id/navDeviceGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                    <TextView
+                        style="@style/Mb.Drawer.Section"
+                        android:text="@string/drawer_group_more" />
+
+                    <LinearLayout
+                        android:id="@+id/navMoreGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+
+            <TextView
+                android:id="@+id/tvDrawerVersion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="24dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="24dp"
+                android:paddingBottom="20dp"
+                android:textAppearance="?attr/textAppearanceLabelSmall"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</androidx.drawerlayout.widget.DrawerLayout>
