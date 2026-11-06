@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 圆形图标容器底（M3 Expressive 46dp）：主色容器纯色填充，不加描边——
-     有填充色的色块再叠 1dp 描边会形成「印章」观感，视觉过重；
-     图标块边界靠填充色与卡底（纯白）的色阶对比建立。可被 tint/background 覆盖。 -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="oval">
-    <solid android:color="?attr/colorPrimaryContainer" />
-</shape>
