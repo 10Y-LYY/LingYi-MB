@@ -403,6 +403,12 @@
     <string name="settings_section_pointer">指针</string>
     <string name="settings_section_general">通用</string>
 
+    <!-- 界面风格切换：仅预览版显示，与主题模式 / 主题色同卡同排版 -->
+    <string name="settings_skin_style">界面风格</string>
+    <string name="settings_skin_style_desc">在 Voyage 新界面与稳定版 M3 原生界面之间切换。切换后主界面、二级页与过渡动画同步重建。</string>
+    <string name="settings_skin_style_m3">稳定版 M3</string>
+    <string name="settings_skin_style_voyage">Voyage 风格</string>
+
     <string name="settings_theme_mode">主题模式</string>
     <string name="settings_theme_mode_system">跟随系统</string>
     <string name="settings_theme_mode_light">浅色</string>

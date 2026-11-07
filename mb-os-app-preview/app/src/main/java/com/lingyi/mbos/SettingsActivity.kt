@@ -27,6 +27,7 @@ import com.lingyi.mbos.util.Prefs
 import com.lingyi.mbos.util.ThemeManager
 import com.lingyi.mbos.util.UpdateChecker
 import com.lingyi.mbos.util.themeColor
+import com.lingyi.mbos.util.voyageStyle
 
 /**
  * 设置页：外观（主题模式 / 主题色）、
@@ -63,6 +64,7 @@ class SettingsActivity : BaseActivity() {
 
         setupSkinStyle()
         setupAppearance()
+        unifyChipStyles()
         setupConnection()
         setupPointer()
         setupGeneral()
@@ -82,77 +84,57 @@ class SettingsActivity : BaseActivity() {
 
     /**
      * 设置里切换「稳定版 M3」与「Voyage 风格」。
+     * 本控件与「主题模式 / 主题色」共用同一张卡、同一 tonal 子卡与同一套 Chip 样式
+     * （见 activity_settings.xml），不再运行时单独插卡 —— 设置页由此与整站 Voyage 排版一致。
      * 开关写入 Prefs 并 bump 主题纪元：设置页自身 recreate 立即呈现新配色/排版，
      * 返回栈里的主界面 onResume 检测纪元变化自我重建 —— 届时挂载或卸载 Voyage 皮肤，
      * 所有二级页的换肤、卡片排版、窗口与内容过渡也一起切换（判定点见 util/ThemeExt.kt）。
-     * 稳定版 / 开发版不构建此卡片，界面零变化。
+     * 稳定版 / 开发版隐藏整节，界面零变化。
      */
     private fun setupSkinStyle() {
-        if (BuildConfig.DEFAULT_CHANNEL != "preview") return
-
-        val (card, body) = M3Kit.card(this)
-        body.addView(M3Kit.cardTitle(this, "界面风格"))
-        body.addView(
-            M3Kit.cardDesc(
-                this,
-                "在 Voyage 新界面与稳定版 M3 原生界面之间切换。切换后主界面、二级页与过渡动画同步重建。"
-            )
-        )
-
-        val group = ChipGroup(this).apply {
-            isSingleSelection = true
-            isSelectionRequired = true
+        if (BuildConfig.DEFAULT_CHANNEL != "preview") {
+            b.skinStyleSection.visibility = View.GONE
+            return
         }
-        val checkedBg = themeColor(MR.attr.colorPrimary)
-        val normalBg = themeColor(MR.attr.colorSurfaceVariant)
-        val checkedFg = themeColor(MR.attr.colorOnPrimary)
-        val normalFg = themeColor(MR.attr.colorOnSurfaceVariant)
-
-        // 分段选择器：选中项为深青绿实色胶囊 + 白字，与工具台分类选中态一致
-        fun styledChip(text: String): Chip = Chip(this).apply {
-            this.text = text
-            id = View.generateViewId()
-            isCheckable = true
-            isCheckedIconVisible = false
-            chipBackgroundColor = ColorStateList(
-                arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
-                intArrayOf(checkedBg, normalBg)
-            )
-            setTextColor(
-                ColorStateList(
-                    arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
-                    intArrayOf(checkedFg, normalFg)
-                )
-            )
-        }
-
-        val chipM3 = styledChip("稳定版 M3")
-        val chipVoyage = styledChip("Voyage 风格")
-        group.addView(chipM3)
-        group.addView(chipVoyage)
-        chipM3Id = chipM3.id
-        chipVoyageId = chipVoyage.id
-        body.addView(
-            group,
-            LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            ).apply { topMargin = M3Kit.dp(this@SettingsActivity, 12f) }
-        )
-
-        group.setOnCheckedStateChangeListener { _, ids ->
+        chipM3Id = R.id.chipSkinM3
+        chipVoyageId = R.id.chipSkinVoyage
+        skinGroup = b.cgSkinStyle
+        b.cgSkinStyle.setOnCheckedStateChangeListener { _, ids ->
             if (syncing) return@setOnCheckedStateChangeListener
             val on = ids.firstOrNull() == chipVoyageId
             Prefs.setVoyageSkin(this, on)
             Prefs.bumpThemeEpoch(this)
             recreate()
         }
-        skinGroup = group
+    }
 
-        // 插到「外观」分区标题之后、主题卡之前
-        val idx = b.settingsContent.indexOfChild(b.tvSectionAppearance) + 1
-        b.settingsContent.addView(card, idx)
-        M3Kit.applyPressFeedback(card)
+    /**
+     * 界面风格适配：Voyage 风格下把设置页所有分段选择器统一为
+     * 「深青绿实色胶囊 + 白字」选中态，与工具台分类、M3Kit 程序化分段选择器同一套视觉语言。
+     * 切回「稳定版 M3」时不套用，恢复原生 M3 Filter chip 外观。
+     */
+    private fun unifyChipStyles() {
+        if (!voyageStyle()) return
+        val checkedBg = themeColor(MR.attr.colorPrimary)
+        val normalBg = themeColor(MR.attr.colorSurface)
+        val checkedFg = themeColor(MR.attr.colorOnPrimary)
+        val normalFg = themeColor(MR.attr.colorOnSurfaceVariant)
+        val states = arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf())
+        val radius = M3Kit.dp(this, 12f).toFloat()
+        listOf(
+            b.cgSkinStyle, b.cgThemeMode, b.cgThemeColor, b.cgConsoleStyle,
+            b.cgDefaultConn, b.cgReadInterval
+        ).forEach { group ->
+            for (i in 0 until group.childCount) {
+                val chip = group.getChildAt(i) as? Chip ?: continue
+                chip.isCheckedIconVisible = false
+                chip.chipStrokeWidth = 0f
+                chip.shapeAppearanceModel = chip.shapeAppearanceModel
+                    .toBuilder().setAllCornerSizes(radius).build()
+                chip.chipBackgroundColor = ColorStateList(states, intArrayOf(checkedBg, normalBg))
+                chip.setTextColor(ColorStateList(states, intArrayOf(checkedFg, normalFg)))
+            }
+        }
     }
 
     // ---------- 外观 ----------

@@ -46,7 +46,7 @@ android {
             applicationIdSuffix = ".preview"
             // 本次「Voyage 风格界面」为预览版专属发布：仅预览通道独立升构建号，
             // 稳定版 / 开发版沿用 53（其线上 APK 与 version*.json 均不动，不触发误更新）
-            versionCode = 60
+            versionCode = 61
             versionName = "4.2.7-preview"
             buildConfigField("String", "DEFAULT_CHANNEL", "\"preview\"")
             // 预览版同样自带开发者模式（开发者工具箱 + 对外接口默认开启）

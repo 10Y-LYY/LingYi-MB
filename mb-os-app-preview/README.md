@@ -15,7 +15,7 @@
 
 <p>
 <a href="#稳定版-stable"><img src="https://img.shields.io/badge/Stable-4.2.7%20%7C%20code%2053-36685D.svg" alt="Stable"></a>
-<a href="#预览版-preview"><img src="https://img.shields.io/badge/Preview-4.2.7--preview%20%7C%20code%2060-D2E7E0.svg" alt="Preview"></a>
+<a href="#预览版-preview"><img src="https://img.shields.io/badge/Preview-4.2.7--preview%20%7C%20code%2061-D2E7E0.svg" alt="Preview"></a>
 <a href="#开发者测试版-devtest"><img src="https://img.shields.io/badge/DevTest-4.2.7--dev%20%7C%20code%2053-EDF2EE.svg" alt="DevTest"></a>
 </p>
 
@@ -45,6 +45,7 @@
 - [核心特性](#核心特性)
 - [界面与适配](#界面与适配)
   - [二级页过渡与排版统一](#二级页过渡与排版统一code-60)
+  - [设置页风格适配与 M 字标修复](#设置页风格适配与-m-字标修复code-61)
   - [设置里切换界面风格](#设置里切换界面风格)
 - [三个版本说明](#三个版本说明)
   - [稳定版 stable](#稳定版-stable)
@@ -134,6 +135,11 @@ App 内置 **MB-OS v4.0.0** MicroPython 合并固件，烧录后开发板即可�
 - **平滑转场**：300ms 微缩放 + 轻滑的窗口转场，页面内分区标题与卡片按顺序错落淡入上滑；
 - **XML 页面同步**：设置页等 XML 布局通过 `ThemeOverlay.MBOS.Voyage` 与运行时圆角统一一并换肤，不再出现「主界面换了、设置还是原样式」。
 
+### 设置页风格适配与 M 字标修复（code 61）
+
+- **设置页「界面风格」完全对齐**：此前该开关由代码单独插卡，与「主题模式 / 主题色」的白卡、tonal 子卡、Chip 样式都不一致；现改为同一张卡内的同一结构（标题 + 说明 + 浅灰绿圆角子卡 + 分段选择器），并在 Voyage 风格下把设置页全部分段选择器统一为**深青绿实色胶囊 + 白字**选中态；切回稳定版 M3 时恢复原生 Filter chip 外观。
+- **关于页 M 字标反白**：品牌深青绿圆底上的几何 M 此前仍用深青绿描边，被深色底衬成一团深色、字形不清；现在深底上的 M 改为浅薄荷反白描边（开屏与导航栏的浅底 M 仍为深青绿描边），字形清晰且三处保持同一字形。
+
 ### 设置里切换界面风格
 
 预览版「设置 → 外观 → 界面风格」提供分段选择器，可在 **稳定版 M3** 与 **Voyage 风格**之间切换。开关写入偏好并 bump 主题纪元：主界面皮肤的挂载 / 卸载、二级页换肤与排版、窗口与内容过渡一起重建，返回栈里的页面由 `BaseActivity` 自动重建保证一致。稳定版 / 开发版不显示此开关、界面零变化。
@@ -156,7 +162,7 @@ App 内置 **MB-OS v4.0.0** MicroPython 合并固件，烧录后开发板即可�
 | :--- | :--- | :--- | :--- |
 | **flavor** | `stable` | `preview` | `devtest` |
 | **versionName** | `4.2.7` | `4.2.7-preview` | `4.2.7-dev` |
-| **versionCode** [^3] | `53` | `60` | `53` |
+| **versionCode** [^3] | `53` | `61` | `53` |
 | **包名** | `com.lingyi.mbos` | `com.lingyi.mbos.preview` | `com.lingyi.mbos.dev` |
 | **应用名** | 灵逸 MB | 灵逸 MB 预览 | 灵逸 MB 开发 |
 | **界面** | Material 3 原生 | **Voyage 全新界面** | Material 3 原生 |
@@ -453,7 +459,7 @@ App 启动进入主控制台时按渠道拉取对应 JSON，与本地 `versionCo
 | 渠道 | 更新文件 | 当前 `versionCode` |
 | :--- | :--- | :--- |
 | 稳定版 | [`version.json`](https://af8c03ac486ac1f4a.app.workbuddy.host/version.json) | `53` |
-| 预览版 | [`version-beta.json`](https://af8c03ac486ac1f4a.app.workbuddy.host/version-beta.json) | `60` |
+| 预览版 | [`version-beta.json`](https://af8c03ac486ac1f4a.app.workbuddy.host/version-beta.json) | `61` |
 | 开发版 | [`version-dev.json`](https://af8c03ac486ac1f4a.app.workbuddy.host/version-dev.json) | `53` |
 
 发布新版本的约定：**仅预览通道独立升 `versionCode`**，稳定版与开发版保持 `53`，避免预览版发版时另外两个渠道误收到更新提示。

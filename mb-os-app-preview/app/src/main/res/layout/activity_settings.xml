@@ -50,13 +50,66 @@
                     style="@style/Mb.SectionHeader"
                     android:text="@string/settings_section_appearance" />
 
-                <!-- 主题卡：模式 / 主题色各拆 tonal 子卡 -->
+                <!-- 主题卡：界面风格 / 模式 / 主题色各拆 tonal 子卡，三者排版完全一致 -->
                 <com.google.android.material.card.MaterialCardView style="@style/Mb.Page.Card">
 
                     <LinearLayout style="@style/Mb.Page.CardBody">
 
+                        <!-- 界面风格（仅预览版显示；稳定版 / 开发版由 SettingsActivity 整节隐藏） -->
+                        <LinearLayout
+                            android:id="@+id/skinStyleSection"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/Mb.CardTitle"
+                                android:text="@string/settings_skin_style" />
+
+                            <TextView
+                                style="@style/Mb.CardDesc"
+                                android:layout_marginTop="4dp"
+                                android:text="@string/settings_skin_style_desc" />
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/space_card"
+                                app:cardBackgroundColor="?attr/colorSurfaceContainerHigh"
+                                app:cardCornerRadius="@dimen/shape_inner"
+                                app:cardElevation="0dp"
+                                app:strokeWidth="0dp">
+
+                                <LinearLayout style="@style/Mb.Page.CardBody">
+
+                                    <com.google.android.material.chip.ChipGroup
+                                        android:id="@+id/cgSkinStyle"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        app:selectionRequired="true"
+                                        app:singleSelection="true">
+
+                                        <com.google.android.material.chip.Chip
+                                            android:id="@+id/chipSkinM3"
+                                            style="@style/Widget.Material3.Chip.Filter"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="@string/settings_skin_style_m3" />
+
+                                        <com.google.android.material.chip.Chip
+                                            android:id="@+id/chipSkinVoyage"
+                                            style="@style/Widget.Material3.Chip.Filter"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="@string/settings_skin_style_voyage" />
+                                    </com.google.android.material.chip.ChipGroup>
+                                </LinearLayout>
+                            </com.google.android.material.card.MaterialCardView>
+                        </LinearLayout>
+
                         <TextView
                             style="@style/Mb.CardTitle"
+                            android:layout_marginTop="@dimen/space_section_top"
                             android:text="@string/settings_theme_mode" />
 
                         <com.google.android.material.card.MaterialCardView

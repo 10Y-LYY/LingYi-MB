@@ -103,12 +103,14 @@ private object VColor {
 }
 
 /**
- * 几何 M 字标（开屏 + 关于页 + 导航栏复用）。深青绿描边，纯 Canvas 绘制。
+ * 几何 M 字标（开屏 + 关于页 + 导航栏复用）。纯 Canvas 绘制。
  * 「灵逸 MB」品牌标识，取代原风车图案。
+ * 浅色底上用深青绿描边；[onDark] 为真时（关于页品牌深青绿圆底）反白为浅薄荷描边，
+ * 避免深色圆把 M 也衬成深色一团、看不清字形。
  */
-private class MBLogoView(context: Context) : View(context) {
+private class MBLogoView(context: Context, private val onDark: Boolean = false) : View(context) {
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = VColor.BRAND_DEEP
+        color = if (onDark) Color.parseColor("#F7FAF7") else VColor.BRAND_DEEP
         style = Paint.Style.STROKE
         strokeJoin = Paint.Join.ROUND
         strokeCap = Paint.Cap.ROUND
@@ -126,7 +128,7 @@ private class MBLogoView(context: Context) : View(context) {
         val top = cy - m * 0.74f
         val bottom = cy + m * 0.74f
         val valley = cy + m * 0.30f
-        paint.strokeWidth = m * 0.30f
+        paint.strokeWidth = m * (if (onDark) 0.26f else 0.30f)
         val p = Path()
         p.moveTo(left, bottom)
         p.lineTo(left, top)
@@ -1579,7 +1581,8 @@ class VoyageSkin(
                 setColor(VColor.BRAND)
             }
         }
-        logoBg.addView(MBLogoView(ctx), FrameLayout.LayoutParams(dp(62f), dp(62f), Gravity.CENTER))
+        logoBg.addView(MBLogoView(ctx, onDark = true),
+            FrameLayout.LayoutParams(dp(62f), dp(62f), Gravity.CENTER))
         brand.addView(logoBg, LinearLayout.LayoutParams(dp(88f), dp(88f)))
         brand.addView(tv("灵逸 MB", 30f, VColor.INK, bold = true),
             LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,

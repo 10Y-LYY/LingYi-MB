@@ -2,7 +2,7 @@
 ====================================
 渠道(channel): preview
 版本(versionName): 4.2.7-preview
-versionCode: 60
+versionCode: 61
 内置固件: MB-OS v4.0.0
 许可证: MIT License
 
@@ -10,7 +10,7 @@ versionCode: 60
 差异仅在 app/build.gradle.kts 的 productFlavors 配置。
 本仓库使用 Android Gradle Plugin 构建，支持一次产出三种 flavor：
   - stable   (com.lingyi.mbos,          4.2.7,  code 53)
-  - preview  (com.lingyi.mbos.preview,  4.2.7-preview, code 60)
+  - preview  (com.lingyi.mbos.preview,  4.2.7-preview, code 61)
   - devtest  (com.lingyi.mbos.dev,      4.2.7-dev,     code 53)
 
 构建方式：
