@@ -1,33 +1,12 @@
-<div align="center">
+# 灵逸 MB · LingYi-MB
 
-<h1>灵逸 MB · LingYi-MB</h1>
+**一台安卓手机，玩转 micro:bit V2**
 
-<p><strong>一台安卓手机，玩转 micro:bit V2</strong></p>
+[![License: MIT](https://img.shields.io/badge/License-MIT-36685D.svg)](LICENSE) · [![Platform Android 7.0+](https://img.shields.io/badge/Platform-Android%207.0%2B-28554B.svg)](#硬件准备) · [![Kotlin 100%](https://img.shields.io/badge/Kotlin-100%25-7F52FF.svg)](#技术栈) · [![minSdk 24](https://img.shields.io/badge/minSdk-24-5E6E68.svg)](#从源码构建) · [![targetSdk 34](https://img.shields.io/badge/targetSdk-34-5E6E68.svg)](#从源码构建) · ![Repo 10Y-LYY/LingYi-MB](https://img.shields.io/badge/Repo-10Y--LYY%2FLingYi--MB-1E2A26.svg)
 
-<p>
-<a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-36685D.svg" alt="License: MIT"></a>
-<a href="#硬件准备"><img src="https://img.shields.io/badge/Platform-Android%207.0%2B-28554B.svg" alt="Platform"></a>
-<a href="#技术栈"><img src="https://img.shields.io/badge/Kotlin-100%25-7F52FF.svg" alt="Kotlin"></a>
-<a href="#从源码构建"><img src="https://img.shields.io/badge/minSdk-24-5E6E68.svg" alt="minSdk"></a>
-<a href="#从源码构建"><img src="https://img.shields.io/badge/targetSdk-34-5E6E68.svg" alt="targetSdk"></a>
-<img src="https://img.shields.io/badge/Repo-10Y--LYY%2FLingYi--MB-1E2A26.svg" alt="Repo">
-</p>
+[![Stable 4.2.7 | code 53](https://img.shields.io/badge/Stable-4.2.7%20%7C%20code%2053-36685D.svg)](#稳定版-stable) · [![Preview 4.2.7-preview | code 61](https://img.shields.io/badge/Preview-4.2.7--preview%20%7C%20code%2061-D2E7E0.svg)](#预览版-preview) · [![DevTest 4.2.7-dev | code 53](https://img.shields.io/badge/DevTest-4.2.7--dev%20%7C%20code%2053-EDF2EE.svg)](#开发者测试版-devtest)
 
-<p>
-<a href="#稳定版-stable"><img src="https://img.shields.io/badge/Stable-4.2.7%20%7C%20code%2053-36685D.svg" alt="Stable"></a>
-<a href="#预览版-preview"><img src="https://img.shields.io/badge/Preview-4.2.7--preview%20%7C%20code%2059-D2E7E0.svg" alt="Preview"></a>
-<a href="#开发者测试版-devtest"><img src="https://img.shields.io/badge/DevTest-4.2.7--dev%20%7C%20code%2053-EDF2EE.svg" alt="DevTest"></a>
-</p>
-
-<p>
-<a href="#下载与安装">下载与安装</a> ·
-<a href="#三个版本说明">三个版本说明</a> ·
-<a href="#快速开始">快速开始</a> ·
-<a href="#从源码构建">从源码构建</a> ·
-<a href="#常见问题">常见问题</a>
-</p>
-
-</div>
+[下载与安装](#下载与安装) · [三个版本说明](#三个版本说明) · [快速开始](#快速开始) · [从源码构建](#从源码构建) · [常见问题](#常见问题)
 
 ---
 
@@ -44,6 +23,9 @@
 - [项目简介](#项目简介)
 - [核心特性](#核心特性)
 - [界面与适配](#界面与适配)
+  - [二级页过渡与排版统一](#二级页过渡与排版统一code-60)
+  - [设置页风格适配与 M 字标修复](#设置页风格适配与-m-字标修复code-61)
+  - [设置里切换界面风格](#设置里切换界面风格)
 - [三个版本说明](#三个版本说明)
   - [稳定版 stable](#稳定版-stable)
   - [预览版 preview](#预览版-preview)
@@ -55,6 +37,7 @@
 - [内置固件](#内置固件)
 - [指令协议](#指令协议)
 - [从源码构建](#从源码构建)
+  - [发版流程（每下次都这样）](#发版流程每下次都这样)
 - [目录结构](#目录结构)
 - [权限说明](#权限说明)
 - [开发者接口](#开发者接口)
@@ -120,7 +103,25 @@ App 内置 **MB-OS v4.0.0** MicroPython 合并固件，烧录后开发板即可�
 | 版本 | 界面风格 | 说明 |
 | :--- | :--- | :--- |
 | 稳定版 / 开发版 | **Material 3 浓系原生风格** | 全部颜色走 M3 令牌，控件为 `MaterialCardView` / `MaterialButton` / `MaterialSwitch` / `Slider` / `Chip` 等，浅深双主题 |
-| 预览版 | **Voyage 风格** | 深青绿主色、几何 M 字标、开屏动效、骨架屏错落淡入、圆形揭示转场；二级页与弹窗经统一配色映射同步换肤 |
+| 预览版 | **Voyage 风格**（设置里可切回 M3） | 深青绿主色、几何 M 字标、开屏动效、骨架屏错落淡入、圆形揭示转场；二级页、弹窗与 XML 页面经统一主题覆盖层同步换肤 |
+
+### 二级页过渡与排版统一（code 60）
+
+所有二级页（设置、关于、开发者工具箱、功能分组、各类弹窗）共用一套排版语言，一处改动全量生效：
+
+- **卡片浮起**：纯白卡片 + 26dp 大圆角 + 无描边，浮在浅灰绿页面底上，靠色阶而不是描边分层；
+- **分组与选择器**：更大更醒目的分区标题、分段选择器选中项为深青绿实色胶囊 + 白字（与主界面分类选中态一致）；
+- **平滑转场**：300ms 微缩放 + 轻滑的窗口转场，页面内分区标题与卡片按顺序错落淡入上滑；
+- **XML 页面同步**：设置页等 XML 布局通过 `ThemeOverlay.MBOS.Voyage` 与运行时圆角统一一并换肤，不再出现「主界面换了、设置还是原样式」。
+
+### 设置页风格适配与 M 字标修复（code 61）
+
+- **设置页「界面风格」完全对齐**：此前该开关由代码单独插卡，与「主题模式 / 主题色」的白卡、tonal 子卡、Chip 样式都不一致；现改为同一张卡内的同一结构（标题 + 说明 + 浅灰绿圆角子卡 + 分段选择器），并在 Voyage 风格下把设置页全部分段选择器统一为**深青绿实色胶囊 + 白字**选中态；切回稳定版 M3 时恢复原生 Filter chip 外观。
+- **关于页 M 字标反白**：品牌深青绿圆底上的几何 M 此前仍用深青绿描边，被深色底衬成一团深色、字形不清；现在深底上的 M 改为浅薄荷反白描边（开屏与导航栏的浅底 M 仍为深青绿描边），字形清晰且三处保持同一字形。
+
+### 设置里切换界面风格
+
+预览版「设置 → 外观 → 界面风格」提供分段选择器，可在 **稳定版 M3** 与 **Voyage 风格**之间切换。开关写入偏好并 bump 主题纪元：主界面皮肤的挂载 / 卸载、二级页换肤与排版、窗口与内容过渡一起重建，返回栈里的页面由 `BaseActivity` 自动重建保证一致。稳定版 / 开发版不显示此开关、界面零变化。
 
 手机自适应（`smallestScreenWidthDp < 600`，预览版）：
 
@@ -128,7 +129,7 @@ App 内置 **MB-OS v4.0.0** MicroPython 合并固件，烧录后开发板即可�
 - 工具台分类由左侧栏改为**顶部横向滚动胶囊**，网格全宽铺开、列数随宽度自适应；
 - 顶栏隐藏冗余菜单按钮，系统栏与窗口底色与页面统一，按状态栏 / 导航栏 / 挖孔 inset 整体内收留白。
 
-> 设计规范自 v2.9 起强制执行：控件一律采用原生 Material 3 风格，颜色与字号不硬编码在布局中，列表行高 ≥ 72dp、图标 ≥ 40dp，强调用字重与字阶而非另造颜色。
+> 设计规范自 v2.9 起强制执行：控件一律采用原生 Material 3 风格，颜色与字号不硬编码在布局中，列表行高 ≥ 72dp、图标 ≥ 40dp，强调用字重与字阶而非另造颜色。Voyage 风格在此基础上仅替换色板与形状令牌。
 
 ---
 
@@ -140,7 +141,7 @@ App 内置 **MB-OS v4.0.0** MicroPython 合并固件，烧录后开发板即可�
 | :--- | :--- | :--- | :--- |
 | **flavor** | `stable` | `preview` | `devtest` |
 | **versionName** | `4.2.7` | `4.2.7-preview` | `4.2.7-dev` |
-| **versionCode** [^3] | `53` | `59` | `53` |
+| **versionCode** [^3] | `53` | `61` | `53` |
 | **包名** | `com.lingyi.mbos` | `com.lingyi.mbos.preview` | `com.lingyi.mbos.dev` |
 | **应用名** | 灵逸 MB | 灵逸 MB 预览 | 灵逸 MB 开发 |
 | **界面** | Material 3 原生 | **Voyage 全新界面** | Material 3 原生 |
@@ -168,6 +169,8 @@ App 内置 **MB-OS v4.0.0** MicroPython 合并固件，烧录后开发板即可�
 - 分类点击**实色选中态**与 180ms 颜色渐变过渡；
 - 「我的固件」页、关于页正式文档（用户协议 / 隐私政策 / 权限申请清单各自独立）；
 - 开发者工具箱、设置、关于等所有二级页统一深青绿 Voyage 配色；
+- **二级页排版统一升级**（白卡浮起 / 大圆角分组 / 实色分段选择器 / 300ms 柔和转场与错落入场）；
+- **设置里可切换「稳定版 M3」与「Voyage 风格」**，切换后全 App 界面同步重建；
 - 全部 88 项功能、连接管理、自动更新自检、开发者模式完整保留。
 
 > 预览版可能与稳定版**同机并装**，方便对比。遇到界面问题欢迎通过反馈入口提交。
@@ -188,6 +191,8 @@ App 内置 **MB-OS v4.0.0** MicroPython 合并固件，烧录后开发板即可�
 
 **官方下载页**：<https://af8c03ac486ac1f4a.app.workbuddy.host/>
 
+**开发者站**：<https://af8c03ac486ac1f4a.app.workbuddy.host/dev/> —— 独立的构建 / 源码 / 文档发布点，每次发版的新 APK、三份源码包与 README 都提交在这里，并提供 README 在线阅读。
+
 | 渠道 | 直链 | 源码包 |
 | :--- | :--- | :--- |
 | 稳定版 | [`lingyi-mbos-os-debug.apk`](https://af8c03ac486ac1f4a.app.workbuddy.host/lingyi-mbos-os-debug.apk) | [`lingyi-mbos-os-source-stable.apk`](https://af8c03ac486ac1f4a.app.workbuddy.host/lingyi-mbos-os-source-stable.apk) |
@@ -201,7 +206,7 @@ App 内置 **MB-OS v4.0.0** MicroPython 合并固件，烧录后开发板即可�
 3. **第三方安装器**：部分「静默安装 / 安装器」类工具在覆盖安装时可能报 `Binder invocation to an incorrect interface` 之类的系统接口错误，与 APK 本身无关。改用系统「文件管理 / 下载」直接点开 APK，或用 `adb install -r <file>` 即可。
 4. **未知来源**：首次安装需允许该来源的安装权限。
 
-<details>
+<details markdown="1">
 <summary>命令行安装示例</summary>
 
 ```bash
@@ -236,7 +241,7 @@ adb uninstall com.lingyi.mbos.preview
 5. **（可选）自己编程**：在「编程与刷写」分类打开 MakeCode，下载 `.hex` 后回到 App 一键刷入；也可直接写 MicroPython 代码导入。
 6. **（可选）无线指针**：进入「陀螺仪指针」，按提示开启无障碍服务，倾斜板子即可控制指针。
 
-<details>
+<details markdown="1">
 <summary>连接失败时的排查顺序</summary>
 
 - [ ] 换一根**支持数据传输**的 USB 线，确认手机支持 OTG
@@ -338,7 +343,19 @@ gradle :app:testStableDebugUnitTest
 | `preview` | `"preview"` | `true` | 预览版（Voyage 皮肤） |
 | `devtest` | `"dev"` | `true` | 开发者测试版 |
 
-> Voyage 皮肤由 `BuildConfig.DEFAULT_CHANNEL == "preview"` 在运行时门控挂载；`themeColor()` 的颜色映射同样以此为开关。因此**修改预览版界面不会影响稳定版与开发版**，这也是三个渠道能共用一份源码的原因。
+> Voyage 风格以 `Context.voyageStyle()` 为**唯一判定点**（`DEFAULT_CHANNEL == "preview"` 且设置里的界面风格开关开启）：主界面皮肤挂载、主题覆盖层、`themeColor()` 换肤、M3Kit 排版、窗口与内容过渡全部走它。因此改预览版界面不会影响稳定版 / 开发版，也是三渠道共用一份源码的原因。
+
+### 发版流程（每下次都这样）
+
+每次发版只需一条命令，新 APK、三份源码包与 README 会自动提交到[开发者站](https://af8c03ac486ac1f4a.app.workbuddy.host/dev/)：
+
+```bash
+# 1) 改 app/build.gradle.kts 里 preview 的 versionCode（仅预览版升号）
+# 2) 运行（标题可省略）：
+bash /workspace/publish-dev-site.sh <新版本号> "本次更新说明" "日志标题"
+```
+
+脚本依次完成：升版本号 → 编译预览版 → 重生成三份源码包 → 同步正式站与开发者站文件 → 更新 `version*.json`、首页日志、README 在线版与更新日志 → 发布站点 → 线上校验。稳定版 / 开发版 `versionCode` 恒为 `53`，不触发误更新。
 
 ---
 
@@ -421,7 +438,7 @@ App 启动进入主控制台时按渠道拉取对应 JSON，与本地 `versionCo
 | 渠道 | 更新文件 | 当前 `versionCode` |
 | :--- | :--- | :--- |
 | 稳定版 | [`version.json`](https://af8c03ac486ac1f4a.app.workbuddy.host/version.json) | `53` |
-| 预览版 | [`version-beta.json`](https://af8c03ac486ac1f4a.app.workbuddy.host/version-beta.json) | `59` |
+| 预览版 | [`version-beta.json`](https://af8c03ac486ac1f4a.app.workbuddy.host/version-beta.json) | `61` |
 | 开发版 | [`version-dev.json`](https://af8c03ac486ac1f4a.app.workbuddy.host/version-dev.json) | `53` |
 
 发布新版本的约定：**仅预览通道独立升 `versionCode`**，稳定版与开发版保持 `53`，避免预览版发版时另外两个渠道误收到更新提示。
@@ -445,49 +462,49 @@ App 启动进入主控制台时按渠道拉取对应 JSON，与本地 `versionCo
 
 ## 常见问题
 
-<details>
+<details markdown="1">
 <summary><strong>三个版本可以同时安装吗？会互相覆盖数据吗？</strong></summary>
 
 可以。三者 `applicationId` 不同，属于系统眼里的三个独立应用，数据与日志目录相互隔离。同渠道覆盖升级也无需卸载。
 
 </details>
 
-<details>
+<details markdown="1">
 <summary><strong>为什么预览版版本号一直变，稳定版不动？</strong></summary>
 
 预览版是新界面的高频迭代通道，每次改动独立升 `versionCode`；稳定版只在功能验证完成后才升号。这是为了不让预览版发版误触发稳定版 / 开发版的更新弹窗。
 
 </details>
 
-<details>
+<details markdown="1">
 <summary><strong>源码包下载后打不开 / 提示不是 APK？</strong></summary>
 
 源码包实际是 zip，因分发服务拦截 `.zip` 才使用 `.apk` 扩展名。把后缀改成 `.zip` 再解压即可，不要当 APK 安装。
 
 </details>
 
-<details>
+<details markdown="1">
 <summary><strong>用第三方安装器提示「未知错误」或 Binder 报错？</strong></summary>
 
 这类报错来自安装器自身调用的隐藏系统接口与设备系统版本不匹配，与 APK 无关。APK 的签名、版本号、包名均可被正常解析。改用系统文件管理器直接打开，或 `adb install -r` 安装。
 
 </details>
 
-<details>
+<details markdown="1">
 <summary><strong>连接不上 / 指令没反应？</strong></summary>
 
 按顺序排查：换数据线并确认 OTG → 确认已刷入本项目内置固件 → 重新插拔并接受 USB 授权 → 蓝牙方式确认固件带 BLE 且权限已授予 → 在设置里切换默认连接方式 → 导出错误日志定位。详见[快速开始](#快速开始)。
 
 </details>
 
-<details>
+<details markdown="1">
 <summary><strong>陀螺仪指针为什么需要无障碍权限？</strong></summary>
 
 Android 不允许第三方 App 直接控制系统鼠标指针，因此采用无障碍服务的手势模拟实现（API 30+ 使用连续手势保证拖动平滑，低版本自动降级），对点击、滑动、拖拽、绘图等效。
 
 </details>
 
-<details>
+<details markdown="1">
 <summary><strong>支持 micro:bit V1 吗？</strong></summary>
 
 不支持，仅支持 **micro:bit V2**。V1 的内存与蓝牙能力不足以运行内置 MicroPython 合并固件。
@@ -525,7 +542,7 @@ Copyright (c) 2026 10Y-灵逸云科技
 
 第三方组件与素材**不属于 MIT 覆盖范围**，按各自许可证使用，详见 [NOTICE.md](NOTICE.md)：MicroPython（MIT）、AndroidX / Jetpack / Material Components（Apache-2.0）、micro:bit 官方相关资料等。App 内也可通过「关于 → 开源许可证」查看。
 
-<details>
+<details markdown="1">
 <summary>署名</summary>
 
 Powered by 闫冰峰 · © 10Y-灵逸云开发团队 · 10Y-灵逸云科技 出品
@@ -549,7 +566,8 @@ Powered by 闫冰峰 · © 10Y-灵逸云开发团队 · 10Y-灵逸云科技 出�
 | 用途 | 渠道 |
 | :--- | :--- |
 | 下载与更新 | <https://af8c03ac486ac1f4a.app.workbuddy.host/> |
-| 开发者文档 | <https://af8c03ac486ac1f4a.app.workbuddy.host/dev-docs.html> |
+| 开发者站（新 APK / 源码包 / README） | <https://af8c03ac486ac1f4a.app.workbuddy.host/dev/> |
+| 开发者接口文档 | <https://af8c03ac486ac1f4a.app.workbuddy.host/dev-docs.html> |
 | 代码与 Issue | <https://github.com/10Y-LYY/LingYi-MB> |
 | 错误日志反馈 | `lyy10y_log@126.com`（App 内「关于 → 错误日志与反馈」可一键打包发送） |
 
@@ -566,22 +584,20 @@ Powered by 闫冰峰 · © 10Y-灵逸云开发团队 · 10Y-灵逸云科技 出�
 - [x] 预览版 Voyage 风格界面与几何 M 字标
 - [x] 预览版手机自适应（底部导航 + 分类胶囊 + 边缘留白）
 - [x] 用户协议 / 隐私政策 / 权限清单正式文档
+- [x] 二级页过渡与排版统一升级（白卡浮起 / 分段选择器 / 柔和转场与错落入场）
+- [x] 设置里切换稳定版 M3 与 Voyage 风格
+- [x] 独立开发者站与一键发版流程
 - [ ] 稳定版合入 Voyage 界面（待预览版验证收敛）
-- [ ] 二级页过渡与排版统一升级
 - [ ] 更多板型与固件版本适配
 
 ---
 
-<div align="center">
+**如果这个项目对你有帮助，欢迎点个 Star。**
 
-<p><strong>如果这个项目对你有帮助，欢迎点个 Star。</strong></p>
-
-<p><a href="#readme">回到顶部</a></p>
-
-</div>
+[返回目录](#目录)
 
 [^1]: 工具目录条目数来自 `FeatureCatalog.FEATURES`；系统级入口（连接管理、设置、关于、开发者工具箱等）单独计数，合计约 88 项。
 
 [^2]: Android 不允许第三方 App 直接控制系统鼠标指针，故采用无障碍服务手势模拟；API 30+ 使用 `willContinue` 连续手势，低版本自动降级为离散滑动。
 
-[^3]: 版本号截至 **2026-11-05**，以各渠道 `version*.json` 为准。预览版独立升号，稳定版 / 开发版保持 `53`。
+[^3]: 版本号截至 **2026-11-07**，以各渠道 `version*.json` 为准。预览版独立升号，稳定版 / 开发版保持 `53`。
