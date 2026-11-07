@@ -1,0 +1,28 @@
+# ---- Android / Gradle 构建产物 ----
+*.iml
+.gradle/
+.idea/
+build/
+app/build/
+captures/
+.externalNativeBuild
+.cxx/
+*.apk
+*.ap_
+*.dex
+*.class
+
+# ---- 本机配置（含 SDK 路径，绝不入库）----
+local.properties
+.DS_Store
+
+# ---- 签名密钥与凭据（绝不入库）----
+*.jks
+*.keystore
+*.pem
+*.p12
+github.token
+
+# ---- 说明 ----
+# GitHub 同步配置放在项目外的 /workspace/.github-sync.conf，
+# 不会随源码包分发，也不会被提交。

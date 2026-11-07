@@ -7,9 +7,16 @@
 package com.lingyi.mbos
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.LinearLayout
+import com.google.android.material.R as MR
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.lingyi.mbos.databinding.ActivitySettingsBinding
@@ -19,6 +26,7 @@ import com.lingyi.mbos.util.AppLog
 import com.lingyi.mbos.util.Prefs
 import com.lingyi.mbos.util.ThemeManager
 import com.lingyi.mbos.util.UpdateChecker
+import com.lingyi.mbos.util.themeColor
 
 /**
  * 设置页：外观（主题模式 / 主题色）、
@@ -38,6 +46,11 @@ class SettingsActivity : BaseActivity() {
     /** 是否正在联网检查更新（防止连点造成重复请求与状态错乱）。 */
     private var checking = false
 
+    /** 界面风格分段选择器（仅预览版构建）；-1 表示不存在。 */
+    private var skinGroup: ChipGroup? = null
+    private var chipM3Id = -1
+    private var chipVoyageId = -1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         b = ActivitySettingsBinding.inflate(layoutInflater)
@@ -48,6 +61,7 @@ class SettingsActivity : BaseActivity() {
 
         b.toolbar.setNavigationOnClickListener { finish() }
 
+        setupSkinStyle()
         setupAppearance()
         setupConnection()
         setupPointer()
@@ -62,6 +76,83 @@ class SettingsActivity : BaseActivity() {
         super.onResume()
         // 从关于页 / 开发者页返回时同步最新的通道选择
         b.channelPicker.refresh()
+    }
+
+    // ---------- 界面风格切换（仅预览版） ----------
+
+    /**
+     * 设置里切换「稳定版 M3」与「Voyage 风格」。
+     * 开关写入 Prefs 并 bump 主题纪元：设置页自身 recreate 立即呈现新配色/排版，
+     * 返回栈里的主界面 onResume 检测纪元变化自我重建 —— 届时挂载或卸载 Voyage 皮肤，
+     * 所有二级页的换肤、卡片排版、窗口与内容过渡也一起切换（判定点见 util/ThemeExt.kt）。
+     * 稳定版 / 开发版不构建此卡片，界面零变化。
+     */
+    private fun setupSkinStyle() {
+        if (BuildConfig.DEFAULT_CHANNEL != "preview") return
+
+        val (card, body) = M3Kit.card(this)
+        body.addView(M3Kit.cardTitle(this, "界面风格"))
+        body.addView(
+            M3Kit.cardDesc(
+                this,
+                "在 Voyage 新界面与稳定版 M3 原生界面之间切换。切换后主界面、二级页与过渡动画同步重建。"
+            )
+        )
+
+        val group = ChipGroup(this).apply {
+            isSingleSelection = true
+            isSelectionRequired = true
+        }
+        val checkedBg = themeColor(MR.attr.colorPrimary)
+        val normalBg = themeColor(MR.attr.colorSurfaceVariant)
+        val checkedFg = themeColor(MR.attr.colorOnPrimary)
+        val normalFg = themeColor(MR.attr.colorOnSurfaceVariant)
+
+        // 分段选择器：选中项为深青绿实色胶囊 + 白字，与工具台分类选中态一致
+        fun styledChip(text: String): Chip = Chip(this).apply {
+            this.text = text
+            id = View.generateViewId()
+            isCheckable = true
+            isCheckedIconVisible = false
+            chipBackgroundColor = ColorStateList(
+                arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
+                intArrayOf(checkedBg, normalBg)
+            )
+            setTextColor(
+                ColorStateList(
+                    arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
+                    intArrayOf(checkedFg, normalFg)
+                )
+            )
+        }
+
+        val chipM3 = styledChip("稳定版 M3")
+        val chipVoyage = styledChip("Voyage 风格")
+        group.addView(chipM3)
+        group.addView(chipVoyage)
+        chipM3Id = chipM3.id
+        chipVoyageId = chipVoyage.id
+        body.addView(
+            group,
+            LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply { topMargin = M3Kit.dp(this@SettingsActivity, 12f) }
+        )
+
+        group.setOnCheckedStateChangeListener { _, ids ->
+            if (syncing) return@setOnCheckedStateChangeListener
+            val on = ids.firstOrNull() == chipVoyageId
+            Prefs.setVoyageSkin(this, on)
+            Prefs.bumpThemeEpoch(this)
+            recreate()
+        }
+        skinGroup = group
+
+        // 插到「外观」分区标题之后、主题卡之前
+        val idx = b.settingsContent.indexOfChild(b.tvSectionAppearance) + 1
+        b.settingsContent.addView(card, idx)
+        M3Kit.applyPressFeedback(card)
     }
 
     // ---------- 外观 ----------
@@ -309,6 +400,9 @@ class SettingsActivity : BaseActivity() {
      *  表现为「点进设置闪退回引导页」，这里统一兜底。）
      */
     private fun loadState() {
+        runCatching {
+            skinGroup?.check(if (Prefs.isVoyageSkin(this)) chipVoyageId else chipM3Id)
+        }.onFailure { AppLog.e("Settings", "界面风格控件初始化失败", it) }
         runCatching {
             b.cgThemeMode.check(
                 when (ThemeManager.normalizeMode(Prefs.getThemeMode(this))) {

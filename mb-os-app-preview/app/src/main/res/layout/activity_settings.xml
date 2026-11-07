@@ -35,6 +35,7 @@
             android:scrollbars="vertical">
 
             <LinearLayout
+                android:id="@+id/settingsContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -45,6 +46,7 @@
 
                 <!-- ============ 外观 ============ -->
                 <TextView
+                    android:id="@+id/tvSectionAppearance"
                     style="@style/Mb.SectionHeader"
                     android:text="@string/settings_section_appearance" />
 

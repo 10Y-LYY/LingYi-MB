@@ -10,14 +10,21 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.animation.DecelerateInterpolator
+import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.NestedScrollView
+import com.google.android.material.card.MaterialCardView
 import com.lingyi.mbos.util.ActionTrail
 import com.lingyi.mbos.util.ActivityTopHolder
 import com.lingyi.mbos.util.AnrWatchdog
 import com.lingyi.mbos.util.AppLog
 import com.lingyi.mbos.util.Prefs
 import com.lingyi.mbos.util.ThemeManager
+import com.lingyi.mbos.util.voyageStyle
 
 /**
  * 全部页面的基类：统一在 super.onCreate() 之前应用用户主题
@@ -55,6 +62,7 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         themeEpochAtCreate = Prefs.getThemeEpoch(this)
         applyWindowAnimations()
+        applyContentEnterAnimation()
         AppLog.event("页面创建", javaClass.simpleName)
         // 操作轨迹：问题上报时还原「用户当时在哪个页面」
         ActionTrail.record("进入页面", javaClass.simpleName)
@@ -97,12 +105,75 @@ abstract class BaseActivity : AppCompatActivity() {
     protected fun applyWindowAnimations() {
         runCatching {
             window.setWindowAnimations(
-                if (Prefs.isAnimationEnabled(this)) {
-                    com.lingyi.mbos.R.style.WindowAnimation_MBOS
-                } else {
-                    com.lingyi.mbos.R.style.WindowAnimation_MBOS_None
+                when {
+                    // 「界面过渡动画」总开关优先
+                    !Prefs.isAnimationEnabled(this) -> com.lingyi.mbos.R.style.WindowAnimation_MBOS_None
+                    // Voyage 风格：300ms 柔和微缩放 + 轻滑
+                    voyageStyle() -> com.lingyi.mbos.R.style.WindowAnimation_MBOS_Voyage
+                    else -> com.lingyi.mbos.R.style.WindowAnimation_MBOS
                 }
             )
         }.onFailure { AppLog.w("BaseActivity", "窗口转场动画应用失败", it) }
+    }
+
+    /**
+     * 二级页过渡统一升级：分区标题与卡片按顺序错落淡入 + 轻微上滑。
+     * 仅预览版开启 Voyage 风格时生效，并遵循设置里的「界面过渡动画」总开关；
+     * 主界面（Voyage 皮肤自带骨架屏入场）与引导页跳过，避免重复动画。
+     */
+    private fun applyContentEnterAnimation() {
+        if (!voyageStyle() || !Prefs.isAnimationEnabled(this)) return
+        if (this is MainActivity || this is GuideActivity) return
+        val content = findViewById<ViewGroup>(android.R.id.content) ?: return
+        // 子类的 setContentView 在 super.onCreate 之后才执行，延后到下一帧再找内容列
+        content.post {
+            if (isFinishing || isDestroyed) return@post
+            val root = content.getChildAt(0) ?: return@post
+            // XML 页面卡片的圆角/描边写在 style 里，主题覆盖层改不到，运行时统一升级
+            applyVoyageCardStyling(root)
+            val column = findScrollContent(root) ?: return@post
+            val shift = 14f * resources.displayMetrics.density
+            for (i in 0 until column.childCount) {
+                val child = column.getChildAt(i) ?: continue
+                child.alpha = 0f
+                child.translationY = shift
+                child.animate()
+                    .alpha(1f)
+                    .translationY(0f)
+                    .setStartDelay(30L + i * 36L)
+                    .setDuration(280L)
+                    .setInterpolator(DecelerateInterpolator(1.5f))
+                    .start()
+            }
+        }
+    }
+
+    /**
+     * 二级页排版统一：把 XML 页面卡片的圆角提到 26dp、去掉 1dp 描边。
+     * 卡片与页面底的层次由 Voyage 主题覆盖层提供（白卡浮在浅灰绿底上），
+     * 此处只处理 style 写死、主题无法覆盖的形状项。
+     */
+    private fun applyVoyageCardStyling(v: View) {
+        if (v is MaterialCardView) {
+            v.radius = 26f * resources.displayMetrics.density
+            v.strokeWidth = 0
+        }
+        if (v is ViewGroup) {
+            for (i in 0 until v.childCount) applyVoyageCardStyling(v.getChildAt(i))
+        }
+    }
+
+    /** 找到页面里承载分区标题 / 卡片的滚动内容列。 */
+    private fun findScrollContent(v: View): ViewGroup? {
+        if ((v is ScrollView || v is NestedScrollView) && v is ViewGroup && v.childCount > 0) {
+            return v.getChildAt(0) as? ViewGroup
+        }
+        if (v is ViewGroup) {
+            for (i in 0 until v.childCount) {
+                val found = findScrollContent(v.getChildAt(i))
+                if (found != null) return found
+            }
+        }
+        return null
     }
 }

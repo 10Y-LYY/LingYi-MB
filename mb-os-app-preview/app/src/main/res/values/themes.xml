@@ -167,10 +167,65 @@
         <item name="android:activityCloseExitAnimation">@anim/mbos_activity_close_exit</item>
     </style>
 
+    <!--
+      Voyage 风格专属转场：300ms 柔和微缩放 + 轻滑（对齐二级页排版升级）。
+      由 BaseActivity 在「预览版 + Voyage 风格开启」时套用；切回稳定版 M3 自动用上面的原版。
+    -->
+    <style name="WindowAnimation.MBOS.Voyage" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/mbos_activity_open_enter_voyage</item>
+        <item name="android:activityOpenExitAnimation">@anim/mbos_activity_open_exit_voyage</item>
+        <item name="android:activityCloseEnterAnimation">@anim/mbos_activity_close_enter_voyage</item>
+        <item name="android:activityCloseExitAnimation">@anim/mbos_activity_close_exit_voyage</item>
+    </style>
+
     <style name="WindowAnimation.MBOS.None" parent="@android:style/Animation.Activity">
         <item name="android:activityOpenEnterAnimation">@anim/mbos_anim_none</item>
         <item name="android:activityOpenExitAnimation">@anim/mbos_anim_none</item>
         <item name="android:activityCloseEnterAnimation">@anim/mbos_anim_none</item>
         <item name="android:activityCloseExitAnimation">@anim/mbos_anim_none</item>
+    </style>
+
+    <!--
+      ============ Voyage 风格主题覆盖层（界面风格切换） ============
+      预览版开启 Voyage 风格时由 ThemeManager.applyTheme() 叠加到 Activity 主题上。
+      XML 布局页（设置 / 抽屉 / 对话框）里的 ?attr/colorXxx 由此整体换为
+      深青绿 + 薄荷绿，与 M3Kit 程序化组件、Voyage 主界面完全一致。
+      切回「稳定版 M3」时不叠加，自动回到原 M3 主题；稳定版 / 开发版恒不叠加。
+      数值与 util/ThemeExt.kt 的 voyageColor() 映射逐项对齐。
+    -->
+    <style name="ThemeOverlay.MBOS.Voyage" parent="">
+        <item name="colorPrimary">#36685D</item>
+        <item name="colorOnPrimary">#F7FAF7</item>
+        <item name="colorPrimaryContainer">#D2E7E0</item>
+        <item name="colorOnPrimaryContainer">#28554B</item>
+        <item name="colorSecondary">#36685D</item>
+        <item name="colorOnSecondary">#F7FAF7</item>
+        <item name="colorSecondaryContainer">#D2E7E0</item>
+        <item name="colorOnSecondaryContainer">#28554B</item>
+        <item name="colorTertiary">#4E7C5B</item>
+        <item name="colorOnTertiary">#FFFFFF</item>
+        <item name="colorTertiaryContainer">#D3F1CF</item>
+        <item name="colorOnTertiaryContainer">#1E2A26</item>
+        <item name="colorSurface">#FFFFFF</item>
+        <item name="colorOnSurface">#1E2A26</item>
+        <item name="colorSurfaceVariant">#E9F1EB</item>
+        <item name="colorOnSurfaceVariant">#5E6E68</item>
+        <item name="colorSurfaceContainerLowest">#FFFFFF</item>
+        <item name="colorSurfaceContainerLow">#EAEFEB</item>
+        <item name="colorSurfaceContainer">#EFF4EF</item>
+        <item name="colorSurfaceContainerHigh">#E1E9E2</item>
+        <item name="colorSurfaceContainerHighest">#DCE6DE</item>
+        <item name="colorSurfaceBright">#FFFFFF</item>
+        <item name="colorSurfaceDim">#DCE6DE</item>
+        <item name="colorOutline">#B9CCC1</item>
+        <item name="colorOutlineVariant">#DDE8E0</item>
+        <item name="colorError">#B23A3A</item>
+        <item name="colorOnError">#FFFFFF</item>
+        <item name="colorErrorContainer">#F7DEDE</item>
+        <item name="colorOnErrorContainer">#5C1F1F</item>
+        <!-- 深色模式下也固定为浅底深字，保证 Voyage 全站浅色一致 -->
+        <item name="android:textColorPrimary">#1E2A26</item>
+        <item name="android:textColorSecondary">#5E6E68</item>
+        <item name="android:windowBackground">#EDF2EE</item>
     </style>
 </resources>

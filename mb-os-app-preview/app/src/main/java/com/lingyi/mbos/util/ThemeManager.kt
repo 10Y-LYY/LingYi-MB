@@ -93,6 +93,13 @@ object ThemeManager {
                 runCatching { DynamicColors.applyToActivityIfAvailable(activity) }
                     .onFailure { AppLog.w("ThemeManager", "动态取色失败，回退静态配色", it) }
             }
+            // 界面风格：预览版开启 Voyage 时，最后叠加 Voyage 主题覆盖层。
+            // 这一步让 XML 布局页（设置等）的 ?attr/colorXxx 也整体换成深青绿薄荷绿，
+            // 与 M3Kit 程序化二级页、Voyage 主界面一致；切回「稳定版 M3」则不叠加，
+            // 自动回到原 M3 主题。稳定版 / 开发版恒不进入。
+            if (activity.voyageStyle()) {
+                activity.theme.applyStyle(R.style.ThemeOverlay_MBOS_Voyage, true)
+            }
         }.onFailure { AppLog.e("ThemeManager", "主题应用失败（${activity.javaClass.simpleName}）", it) }
     }
 

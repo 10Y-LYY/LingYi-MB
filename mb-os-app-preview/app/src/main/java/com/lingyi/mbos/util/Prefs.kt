@@ -54,6 +54,24 @@ object Prefs {
      */
     private const val KEY_THEME_EPOCH = "theme_epoch"
 
+    /**
+     * 界面风格（预览版专属）：
+     *  - true  = Voyage 风格（新主界面 + 二级页换肤/排版升级 + 统一过渡）；
+     *  - false = 稳定版 M3 原生风格（不挂载 Voyage 皮肤，二级页回到原主题）。
+     * 稳定版 / 开发版恒按 false 处理，设置页也不显示此开关。
+     * 修改后需 bumpThemeEpoch，让返回栈里的页面自我重建。
+     */
+    private const val KEY_VOYAGE_SKIN = "voyage_skin"
+
+    fun isVoyageSkin(ctx: Context): Boolean =
+        ctx.getSharedPreferences(NAME, Context.MODE_PRIVATE)
+            .getBoolean(KEY_VOYAGE_SKIN, true)
+
+    fun setVoyageSkin(ctx: Context, on: Boolean) {
+        ctx.getSharedPreferences(NAME, Context.MODE_PRIVATE)
+            .edit().putBoolean(KEY_VOYAGE_SKIN, on).apply()
+    }
+
     // ---------- 设置：连接 ----------
     private const val KEY_READ_INTERVAL = "read_interval"  // 实时读取轮询间隔（毫秒）
     private const val KEY_KEEP_SCREEN_ON = "keep_screen_on"

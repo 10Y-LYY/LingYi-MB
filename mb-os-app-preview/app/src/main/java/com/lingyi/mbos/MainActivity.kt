@@ -199,8 +199,10 @@ class MainActivity : BaseActivity() {
         b = ActivityMainBinding.inflate(layoutInflater)
         setContentView(b.root)
 
-        // 预览版专属：叠加 Voyage 风格皮肤（稳定版/开发版完全不进入此分支）
-        if (BuildConfig.DEFAULT_CHANNEL == "preview") {
+        // 预览版专属：叠加 Voyage 风格皮肤（稳定版/开发版完全不进入此分支）。
+        // 设置里可把界面风格切回「稳定版 M3」——此时不挂载皮肤，原本的 M3 控制台
+        // 视图树原样显示；切回 Voyage 再重新挂载。切换会 bump 主题纪元令本页重建。
+        if (BuildConfig.DEFAULT_CHANNEL == "preview" && Prefs.isVoyageSkin(this)) {
             runCatching { mountVoyageSkin() }
                 .onFailure { AppLog.e("MainActivity", "Voyage 皮肤挂载失败，回落原界面", it) }
         }

@@ -29,6 +29,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.lingyi.mbos.R
 import com.lingyi.mbos.util.themeColor
+import com.lingyi.mbos.util.voyageStyle
 
 /**
  * M3 Expressive 设计系统——全 App 唯一一套程序化组件库。
@@ -84,15 +85,33 @@ object M3Kit {
     const val ICON_CIRCLE = 46f         // 圆形图标容器
     const val ICON_SIZE = 24f           // 容器内矢量图标
 
+    // ---------- 界面风格排版令牌（Voyage 风格 / 稳定版 M3） ----------
+
+    /**
+     * 二级页排版统一升级的唯一定点：Voyage 风格下采用「纯白卡片浮在浅灰绿底上」、
+     * 更大圆角与轻微浮起阴影、更大更醒目的分区标题；切回稳定版 M3 时全部回到原参数。
+     * 所有程序化二级页 / 弹窗都走本组件库，故一处改动即全量生效。
+     */
+    private fun Context.cardRadiusDp(): Float = if (voyageStyle()) 26f else SHAPE_CARD
+    private fun Context.cardElevationDp(): Float = if (voyageStyle()) 2f else 0f
+    private fun Context.cardBodyPaddingDp(): Float = if (voyageStyle()) 18f else SP_16
+
     // ---------- 分区标题（卡片外） ----------
 
     fun sectionHeader(ctx: Context, text: String): TextView =
         TextView(ctx).apply {
             this.text = text
-            setTextAppearance(MR.attr.textAppearanceTitleMedium)
-            setTextColor(ctx.themeColor(MR.attr.colorOnSurface))
+            val voyage = ctx.voyageStyle()
+            setTextAppearance(
+                if (voyage) MR.attr.textAppearanceTitleLarge
+                else MR.attr.textAppearanceTitleMedium
+            )
+            setTextColor(
+                if (voyage) ctx.themeColor(MR.attr.colorPrimary)
+                else ctx.themeColor(MR.attr.colorOnSurface)
+            )
             setTypeface(null, android.graphics.Typeface.BOLD)
-            val m = dp(ctx, SP_8)
+            val m = dp(ctx, if (voyage) SP_12 else SP_8)
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
             ).apply { topMargin = m; bottomMargin = m }
@@ -113,8 +132,8 @@ object M3Kit {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
             ).apply { topMargin = dp(ctx, marginTopDp) }
             setCardBackgroundColor(ctx.themeColor(MR.attr.colorSurface))
-            radius = dp(ctx, SHAPE_CARD).toFloat()
-            cardElevation = 0f
+            radius = dp(ctx, ctx.cardRadiusDp()).toFloat()
+            cardElevation = dp(ctx, ctx.cardElevationDp()).toFloat()
             strokeWidth = 0
         }
 
@@ -125,7 +144,7 @@ object M3Kit {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
             ).apply { topMargin = dp(ctx, marginTopDp) }
             setCardBackgroundColor(ctx.themeColor(MR.attr.colorSurfaceContainerHigh))
-            radius = dp(ctx, SHAPE_CARD).toFloat()
+            radius = dp(ctx, if (ctx.voyageStyle()) 20f else SHAPE_CARD).toFloat()
             cardElevation = 0f
             strokeWidth = 0
         }
@@ -137,16 +156,16 @@ object M3Kit {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
             ).apply { topMargin = dp(ctx, marginTopDp) }
             setCardBackgroundColor(ctx.themeColor(MR.attr.colorPrimaryContainer))
-            radius = dp(ctx, SHAPE_CARD).toFloat()
-            cardElevation = 0f
+            radius = dp(ctx, ctx.cardRadiusDp()).toFloat()
+            cardElevation = dp(ctx, ctx.cardElevationDp()).toFloat()
             strokeWidth = 0
         }
 
-    /** 卡片内部纵向容器（16dp 内边距）。 */
+    /** 卡片内部纵向容器（Voyage 风格下 18dp，M3 下 16dp 内边距）。 */
     fun cardBody(ctx: Context): LinearLayout =
         LinearLayout(ctx).apply {
             orientation = LinearLayout.VERTICAL
-            val p = dp(ctx, SP_16)
+            val p = dp(ctx, ctx.cardBodyPaddingDp())
             setPadding(p, p, p, p)
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
@@ -374,8 +393,8 @@ object M3Kit {
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
             ).apply { topMargin = dp(ctx, SP_8) }
-            radius = dp(ctx, SHAPE_CARD).toFloat()
-            cardElevation = 0f
+            radius = dp(ctx, ctx.cardRadiusDp()).toFloat()
+            cardElevation = dp(ctx, ctx.cardElevationDp()).toFloat()
             setCardBackgroundColor(ctx.themeColor(MR.attr.colorSurface))
             strokeWidth = 0
             isClickable = true
